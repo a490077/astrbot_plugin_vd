@@ -40,7 +40,6 @@ class VindaPlugin(Star):
     async def 订餐(self, event: AstrMessageEvent):
         """订餐命令"""
         user_name = event.get_sender_name()
-        logger.info(self.context.get_config())
         reply_message = self.vinda.do_order(user_dict.get(user_name)) if user_dict.get(user_name) else "你还不是VIP"
         yield event.plain_result(f"@{user_name} {reply_message}")
 
@@ -52,8 +51,8 @@ class VindaPlugin(Star):
         yield event.plain_result(f"@{user_name} {reply_message}")
 
     @filter.command("二维码")
-    async def 菜单(self, event: AstrMessageEvent):
-        """获取今日菜单"""
+    async def 二维码(self, event: AstrMessageEvent):
+        """获取自己的二维码"""
         user_name = event.get_sender_name()
         reply_message = self.vinda.get_qr_code_data(user_dict.get(user_name)) if user_dict.get(user_name) else "你还不是VIP"
         yield event.plain_result(reply_message)
