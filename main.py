@@ -1,7 +1,7 @@
 from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
 from astrbot.api.star import Context, Star, register
 from astrbot.api import logger
-from vinda import Vinda
+from data.plugins.astrbot_plugin_vd.vinda import Vinda
 
 user_dict = {
     "郭鹏": "130556",

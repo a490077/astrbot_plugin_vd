@@ -7,13 +7,13 @@
     },
     "cookie_url": {
         "description": "cookie_url",
-        "type": "object",
+        "type": "string",
         "hint": "获取cookie接口地址",
         "obvious_hint": true
     },
     "fk_url": {
         "description": "fk_url",
-        "type": "object",
+        "type": "string",
         "hint": "fk接口地址",
         "obvious_hint": true
     }
