@@ -35,15 +35,15 @@ class VindaPlugin(Star):
         super().__init__(context)
         self.config = config
         self.vinda = Vinda(self.config)
-        print(self.config)
+        logger.info(self.config)
 
     @filter.command("菜单")
     async def 菜单(self, event: AstrMessageEvent):
         """获取今日菜单"""
         sender_id = event.get_sender_id()
-        print(f"sender_id: {sender_id}")
-        print("原始消息如下:")
-        print(event.message_obj.raw_message)
+        logger.info(f"sender_id: {sender_id}")
+        logger.info("原始消息如下:")
+        logger.info(event.message_obj.raw_message)
         reply_message = self.vinda.菜单()
         yield event.plain_result(reply_message)
 
