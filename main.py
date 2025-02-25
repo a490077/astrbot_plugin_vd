@@ -40,10 +40,6 @@ class VindaPlugin(Star):
     @filter.command("菜单")
     async def 菜单(self, event: AstrMessageEvent):
         """获取今日菜单"""
-        sender_id = event.get_sender_id()
-        logger.info(f"sender_id: {sender_id}")
-        logger.info("原始消息如下:")
-        logger.info(event.message_obj.raw_message)
         reply_message = self.vinda.菜单()
         yield event.plain_result(reply_message)
 
@@ -56,23 +52,35 @@ class VindaPlugin(Star):
     @filter.command("订餐")
     async def 订餐(self, event: AstrMessageEvent):
         """订餐命令"""
+        sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
-        reply_message = self.vinda.do_order(user_dict.get(user_name)) if user_dict.get(user_name) else "你还不是VIP"
+        if sender_id not in wx_id_dict:
+            yield event.plain_result(f"@{user_name} 你还不是VIP")
+            return
+        reply_message = self.vinda.do_order(user_dict.get(wx_id_dict[sender_id]))
         yield event.plain_result(f"@{user_name} {reply_message}")
 
     @filter.command("销餐")
     async def 销餐(self, event: AstrMessageEvent):
         """销餐命令"""
+        sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
-        reply_message = self.vinda.pin_meal(user_dict.get(user_name)) if user_dict.get(user_name) else "你还不是VIP"
+        if sender_id not in wx_id_dict:
+            yield event.plain_result(f"@{user_name} 你还不是VIP")
+            return
+        reply_message = self.vinda.pin_meal(user_dict.get(wx_id_dict[sender_id]))
         yield event.plain_result(f"@{user_name} {reply_message}")
 
     @filter.command("二维码")
     async def 二维码(self, event: AstrMessageEvent):
         """获取自己的二维码"""
+        sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
-        reply_message = self.vinda.get_qr_code_data(user_dict.get(user_name)) if user_dict.get(user_name) else "你还不是VIP"
-        yield event.plain_result(reply_message)
+        if sender_id not in wx_id_dict:
+            yield event.plain_result(f"@{user_name} 你还不是VIP")
+            return
+        reply_message = self.vinda.get_qr_code_data(user_dict.get(wx_id_dict[sender_id]))
+        yield event.plain_result(f"@{user_name} {reply_message}")
 
     @filter.command("查询")
     async def 查询(self, event: AstrMessageEvent, name: str = None):
@@ -83,27 +91,21 @@ class VindaPlugin(Star):
     @filter.llm_tool()
     async def get_menu(self, event: AstrMessageEvent):
         """获取今天的菜单, 不用任何参数, 当用户需要查看菜单时, 可以使用这个函数, 例如用户想知道今天吃什么的时候"""
-        reply_message = self.vinda.菜单()
-        yield event.plain_result(reply_message)
+        self.菜单(event)
 
     @filter.llm_tool()
     async def do_order(self, event: AstrMessageEvent):
         """订餐函数, 用户想要报餐或订餐时调用, 例如用户说订餐、帮我订餐、报餐、帮我报餐, 不用任何参数"""
-        user_name = event.get_sender_name()
-        reply_message = self.vinda.do_order(user_dict.get(user_name)) if user_dict.get(user_name) else "你还不是VIP"
-        yield event.plain_result(f"@{user_name} {reply_message}")
+        self.订餐(event)
 
     @filter.llm_tool()
     async def pin_meal(self, event: AstrMessageEvent):
         """取消订餐函数, 用户想要取消报餐或取消订餐时调用, 例如用户说销餐、取消订餐, 不用任何参数"""
-        user_name = event.get_sender_name()
-        reply_message = self.vinda.pin_meal(user_dict.get(user_name)) if user_dict.get(user_name) else "你还不是VIP"
-        yield event.plain_result(f"@{user_name} {reply_message}")
+        self.销餐(event)
 
     @filter.llm_tool()
     async def looklook(self, event: AstrMessageEvent):
         """查看今天的订餐情况, 当用户想要查询今天有哪些人订餐和没有订餐时调用,
         例如用户想要看看今天的订餐情况, 或者用户说提到 稽查 等词语时调用
         不用任何参数"""
-        reply_message = self.vinda.稽查(user_dict)
-        yield event.plain_result(reply_message)
+        self.稽查(event)
