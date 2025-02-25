@@ -75,14 +75,14 @@ class VindaPlugin(Star):
 
     @filter.llm_tool()
     async def do_order(self, event: AstrMessageEvent):
-        """订餐函数, 用户想要报餐或订餐时调用, 不用任何参数"""
+        """订餐函数, 用户想要报餐或订餐时调用, 例如用户说订餐、帮我订餐、报餐、帮我报餐, 不用任何参数"""
         user_name = event.get_sender_name()
         reply_message = self.vinda.do_order(user_dict.get(user_name)) if user_dict.get(user_name) else "你还不是VIP"
         yield event.plain_result(f"@{user_name} {reply_message}")
 
     @filter.llm_tool()
     async def pin_meal(self, event: AstrMessageEvent):
-        """取消订餐函数, 用户想要取消报餐或取消订餐时调用, 不用任何参数"""
+        """取消订餐函数, 用户想要取消报餐或取消订餐时调用, 例如用户说销餐、取消订餐, 不用任何参数"""
         user_name = event.get_sender_name()
         reply_message = self.vinda.pin_meal(user_dict.get(user_name)) if user_dict.get(user_name) else "你还不是VIP"
         yield event.plain_result(f"@{user_name} {reply_message}")
