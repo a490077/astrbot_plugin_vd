@@ -192,7 +192,7 @@ class Vinda:
         except Exception as e:
             return "获取失败，请稍后再试。"
 
-    def 稽查(self):
+    def 稽查(self, user_dict: dict):
         str = "今日订餐情况: "
         for vinda_name, vinda_id in user_dict.items():
             response = self.get_order(vinda_id)

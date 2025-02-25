@@ -3,6 +3,10 @@ from astrbot.api.star import Context, Star, register
 from astrbot.api import logger
 from data.plugins.astrbot_plugin_vd.vinda import Vinda
 
+wx_id_dict = {
+    "a490077": "郭鹏",
+}
+
 user_dict = {
     "郭鹏": "130556",
     "田友晨": "160994",
@@ -33,7 +37,7 @@ class VindaPlugin(Star):
     @filter.command("稽查")
     async def 稽查(self, event: AstrMessageEvent):
         """查询今日订餐情况"""
-        reply_message = self.vinda.稽查()
+        reply_message = self.vinda.稽查(user_dict)
         yield event.plain_result(reply_message)
 
     @filter.command("订餐")
@@ -61,4 +65,10 @@ class VindaPlugin(Star):
     async def 查询(self, event: AstrMessageEvent, name: str = None):
         """根据名称查询员工信息"""
         reply_message = self.vinda.查询(name)
+        yield event.plain_result(reply_message)
+
+    @filter.llm_tool(name="get_menu")  # 如果 name 不填，将使用函数名
+    async def get_menu(self, event: AstrMessageEvent):
+        """获取今天的菜单, 不用任何参数, 当用户需要查看菜单时, 可以使用这个函数, 例如用户想知道今天吃什么的时候"""
+        reply_message = self.vinda.菜单()
         yield event.plain_result(reply_message)
