@@ -5,6 +5,14 @@ from data.plugins.astrbot_plugin_vd.vinda import Vinda
 
 wx_id_dict = {
     "a490077": "郭鹏",
+    "Z7weilaikeji": "赵坚华",
+    "JJJJJay53": "梁嘉卿",
+    "xian-yumei": "冼玉梅",
+    "T403823735": "田友晨",
+    "_yyyy_-": "张智尧",
+    "YGN0313": "杨耿楠",
+    "ROTWbla": "周润泽",
+    "wxid_qh51xgdw485d22": "赵坚华",
 }
 
 user_dict = {
@@ -15,6 +23,7 @@ user_dict = {
     "赵坚华": "146262",
     "张智尧": "155347",
     "杨耿楠": "155520",
+    "周润泽": "155892",
 }
 
 
@@ -31,6 +40,10 @@ class VindaPlugin(Star):
     @filter.command("菜单")
     async def 菜单(self, event: AstrMessageEvent):
         """获取今日菜单"""
+        sender_id = event.get_sender_id()
+        print(f"sender_id: {sender_id}")
+        print("原始消息如下:")
+        print(event.message_obj.raw_message)
         reply_message = self.vinda.菜单()
         yield event.plain_result(reply_message)
 
