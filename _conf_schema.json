@@ -1,0 +1,20 @@
+{
+    "shitang_url": {
+        "description": "shitang_url",
+        "type": "string",
+        "hint": "订餐api接口地址",
+        "obvious_hint": true
+    },
+    "cookie_url": {
+        "description": "cookie_url",
+        "type": "object",
+        "hint": "获取cookie接口地址",
+        "obvious_hint": true
+    },
+    "fk_url": {
+        "description": "fk_url",
+        "type": "object",
+        "hint": "fk接口地址",
+        "obvious_hint": true
+    }
+}
