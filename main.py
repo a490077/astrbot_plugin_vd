@@ -126,18 +126,7 @@ class VindaPlugin(Star):
         self.菜单(event)
 
     @filter.llm_tool()
-    async def do_order(self, event: AstrMessageEvent):
-        """订餐函数, 用户想要报餐或订餐时调用, 例如用户说订餐、帮我订餐、报餐、帮我报餐, 不用任何参数"""
-        self.订餐(event)
-
-    @filter.llm_tool()
-    async def pin_meal(self, event: AstrMessageEvent):
-        """取消订餐函数, 用户想要取消报餐或取消订餐时调用, 例如用户说销餐、取消订餐, 不用任何参数"""
-        self.销餐(event)
-
-    @filter.llm_tool()
     async def looklook(self, event: AstrMessageEvent):
         """查看今天的订餐情况, 当用户想要查询今天有哪些人订餐和没有订餐时调用,
-        例如用户想要看看今天的订餐情况, 或者用户说提到 稽查 等词语时调用
-        不用任何参数"""
+        例如用户想要看看今天的订餐情况, 或者用户说提到 稽查 时调用, 不用任何参数"""
         self.稽查(event)
