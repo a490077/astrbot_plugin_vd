@@ -50,7 +50,7 @@ class VindaPlugin(Star):
         reply_message = self.vinda.稽查(user_dict)
         yield event.plain_result(reply_message)
 
-    @filter.command("订餐")
+    @filter.command("订餐", priority=1)
     async def 订餐(self, event: AstrMessageEvent, args_str: str = None):
         """给自己或指定用户订餐"""
         logger.info(f"参数: {args_str}")
@@ -84,7 +84,7 @@ class VindaPlugin(Star):
                 reply_message += f"\n@{user_name} 还不是VIP"
         yield event.plain_result(reply_message)
 
-    @filter.command("销餐")
+    @filter.command("销餐", priority=1)
     async def 销餐(self, event: AstrMessageEvent, args_str: str = None):
         """给自己或指定用户销餐"""
         args_str = str(args_str)
