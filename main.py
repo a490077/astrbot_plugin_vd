@@ -57,6 +57,7 @@ class VindaPlugin(Star):
         logger.info(event.message_obj.message)
         logger.info(event.message_obj.message_str)
         logger.info(event.message_obj.raw_message)
+        args_str = str(args_str)
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
         if args_str:
