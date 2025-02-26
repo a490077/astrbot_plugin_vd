@@ -53,6 +53,10 @@ class VindaPlugin(Star):
     @filter.command("订餐")
     async def 订餐(self, event: AstrMessageEvent, args_str: str = None):
         """给自己或指定用户订餐"""
+        logger.info(f"参数: {args_str}")
+        logger.info(event.message_obj.message)
+        logger.info(event.message_obj.message_str)
+        logger.info(event.message_obj.raw_message)
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
         if args_str:
