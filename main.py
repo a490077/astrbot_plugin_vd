@@ -66,6 +66,7 @@ class VindaPlugin(Star):
             yield event.plain_result(f"@{user_name} {reply_message}")
 
     @filter.permission_type(PermissionType.ADMIN)
+    @filter.command("帮订餐")
     async def 帮订餐(self, event: AstrMessageEvent, args: list[str]):
         """给指定用户订餐"""
         reply_message = "订餐结果:"
@@ -94,6 +95,7 @@ class VindaPlugin(Star):
             yield event.plain_result(f"@{user_name} {reply_message}")
 
     @filter.permission_type(PermissionType.ADMIN)
+    @filter.command("帮销餐")
     async def 帮销餐(self, event: AstrMessageEvent, args: list[str]):
         """给指定用户销餐"""
         reply_message = "销餐结果:"
