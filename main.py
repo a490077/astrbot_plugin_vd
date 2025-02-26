@@ -136,7 +136,6 @@ class VindaPlugin(Star):
         """获取今天的菜单, 不用任何参数, 当用户需要查看菜单时, 可以使用这个函数, 例如用户想知道今天吃什么的时候"""
         logger.info("get_menu...")
         self.菜单(event)
-        event.stop_event()
 
     @filter.llm_tool()
     async def looklook(self, event: AstrMessageEvent):
@@ -144,4 +143,3 @@ class VindaPlugin(Star):
         例如用户想要看看今天的订餐情况, 或者用户说提到 稽查 时调用, 不用任何参数"""
         logger.info("looklook...")
         self.稽查(event)
-        event.stop_event()
