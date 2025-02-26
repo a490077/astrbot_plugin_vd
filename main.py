@@ -59,6 +59,7 @@ class VindaPlugin(Star):
         if args_str:
             self.帮订餐(event, user_dict.keys() if args_str == "ALL" else args_str.strip().split())
             logger.info("已帮订餐")
+            logger.info(user_dict.keys() if args_str == "ALL" else args_str.strip().split())
         else:
             if sender_id not in wx_id_dict:
                 yield event.plain_result(f"@{user_name} 你还不是VIP")
@@ -66,10 +67,12 @@ class VindaPlugin(Star):
             reply_message = self.vinda.do_order(user_dict.get(wx_id_dict[sender_id]))
             yield event.plain_result(f"@{user_name} {reply_message}")
 
-    @filter.permission_type(PermissionType.ADMIN)
+    # @filter.permission_type(PermissionType.ADMIN)
     @filter.command("帮订餐")
     async def 帮订餐(self, event: AstrMessageEvent, args: list[str]):
         """给指定用户订餐"""
+        logger.info("开始帮订餐, 参数:")
+        logger.info(args)
         reply_message = "订餐结果:"
         for user_name in args:
             if user_name in user_dict:
