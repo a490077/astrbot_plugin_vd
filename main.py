@@ -14,6 +14,8 @@ wx_id_dict = {
     "YGN0313": "杨耿楠",
     "ROTWbla": "周润泽",
     "wxid_qh51xgdw485d22": "赵坚华",
+    "wxid_x2j90wkliqbj21": "梁嘉卿",
+    "wxid_2z1wtpv969x121": "张智尧",
 }
 
 user_dict = {
@@ -30,7 +32,8 @@ user_dict = {
 
 @register("vinda", "pp", "自用vinda助手", "1.0.0", "https://github.com/a490077/astrbot_plugin_vd")
 class VindaPlugin(Star):
-    """🤡vinda小助手🤡 V50开通VIP才能使用"""
+    """🤡vinda小助手🤡
+    🤡V50开通VIP🤡"""
 
     def __init__(self, context: Context, config: dict):
         super().__init__(context)
@@ -51,7 +54,7 @@ class VindaPlugin(Star):
 
     @filter.command("订餐")
     async def 订餐(self, event: AstrMessageEvent):
-        """给自己或指定用户订餐"""
+        """给自己订餐"""
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
         if sender_id not in wx_id_dict:
@@ -76,9 +79,9 @@ class VindaPlugin(Star):
             reply_message = f"@{user_name} 还不是VIP"
         yield event.plain_result(reply_message)
 
-    @filter.command("销餐", priority=1)
+    @filter.command("销餐")
     async def 销餐(self, event: AstrMessageEvent):
-        """给自己或指定用户销餐"""
+        """给自己销餐"""
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
         if sender_id not in wx_id_dict:
@@ -123,10 +126,14 @@ class VindaPlugin(Star):
     @filter.llm_tool()
     async def get_menu(self, event: AstrMessageEvent):
         """获取今天的菜单, 不用任何参数, 当用户需要查看菜单时, 可以使用这个函数, 例如用户想知道今天吃什么的时候"""
-        self.菜单(event)
+        yield self.菜单(event)
+        event.stop_event()
+        yield
 
     @filter.llm_tool()
     async def looklook(self, event: AstrMessageEvent):
         """查看今天的订餐情况, 当用户想要查询今天有哪些人订餐和没有订餐时调用,
         例如用户想要看看今天的订餐情况, 或者用户说提到 稽查 时调用, 不用任何参数"""
-        self.稽查(event)
+        yield self.稽查(event)
+        event.stop_event()
+        yield
