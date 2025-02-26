@@ -43,18 +43,21 @@ class VindaPlugin(Star):
     @filter.command("菜单")
     async def 菜单(self, event: AstrMessageEvent):
         """获取今日菜单"""
+        logger.info("菜单...")
         reply_message = self.vinda.菜单()
         yield event.plain_result(reply_message)
 
     @filter.command("稽查")
     async def 稽查(self, event: AstrMessageEvent):
         """查询今日订餐情况"""
+        logger.info("稽查...")
         reply_message = self.vinda.稽查(user_dict)
         yield event.plain_result(reply_message)
 
     @filter.command("订餐")
     async def 订餐(self, event: AstrMessageEvent):
         """给自己订餐"""
+        logger.info("订餐...")
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
         if sender_id not in wx_id_dict:
@@ -67,6 +70,7 @@ class VindaPlugin(Star):
     @filter.command("帮订餐")
     async def 帮订餐(self, event: AstrMessageEvent, user_name: str = None):
         """给指定用户订餐"""
+        logger.info("帮订餐...")
         if not user_name:
             yield event.plain_result("请指定要订餐的用户")
             return
@@ -82,6 +86,7 @@ class VindaPlugin(Star):
     @filter.command("销餐")
     async def 销餐(self, event: AstrMessageEvent):
         """给自己销餐"""
+        logger.info("销餐...")
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
         if sender_id not in wx_id_dict:
@@ -94,6 +99,7 @@ class VindaPlugin(Star):
     @filter.command("帮销餐")
     async def 帮销餐(self, event: AstrMessageEvent, user_name: str = None):
         """给指定用户销餐"""
+        logger.info("帮销餐...")
         if not user_name:
             yield event.plain_result("请指定要销餐的用户")
             return
@@ -109,6 +115,7 @@ class VindaPlugin(Star):
     @filter.command("二维码")
     async def 二维码(self, event: AstrMessageEvent):
         """获取自己的用餐二维码数据"""
+        logger.info("二维码...")
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
         if sender_id not in wx_id_dict:
@@ -120,20 +127,23 @@ class VindaPlugin(Star):
     @filter.command("查询")
     async def 查询(self, event: AstrMessageEvent, name: str = None):
         """根据名称查询员工信息"""
+        logger.info("查询...")
         reply_message = self.vinda.查询(name)
         yield event.plain_result(reply_message)
 
     @filter.llm_tool()
     async def get_menu(self, event: AstrMessageEvent):
         """获取今天的菜单, 不用任何参数, 当用户需要查看菜单时, 可以使用这个函数, 例如用户想知道今天吃什么的时候"""
-        logger.info(f"get_menu: {event.get_message_str()}")
-        yield self.菜单(event)
-        yield event.stop_event()
+        logger.info("get_menu...")
+        self.菜单(event)
+        event.stop_event()
+        yield
 
     @filter.llm_tool()
     async def looklook(self, event: AstrMessageEvent):
         """查看今天的订餐情况, 当用户想要查询今天有哪些人订餐和没有订餐时调用,
         例如用户想要看看今天的订餐情况, 或者用户说提到 稽查 时调用, 不用任何参数"""
-        logger.info(f"looklook: {event.get_message_str()}")
-        yield self.稽查(event)
-        yield event.stop_event()
+        logger.info("looklook...")
+        self.稽查(event)
+        event.stop_event()
+        yield
