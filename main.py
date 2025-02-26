@@ -51,7 +51,7 @@ class VindaPlugin(Star):
         yield event.plain_result(reply_message)
 
     @filter.command("订餐")
-    async def 订餐(self, event: AstrMessageEvent, args_str: str):
+    async def 订餐(self, event: AstrMessageEvent, args_str: str = None):
         """给自己或指定用户订餐"""
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
@@ -80,7 +80,7 @@ class VindaPlugin(Star):
         yield event.plain_result(reply_message)
 
     @filter.command("销餐")
-    async def 销餐(self, event: AstrMessageEvent, args_str: str):
+    async def 销餐(self, event: AstrMessageEvent, args_str: str = None):
         """给自己或指定用户销餐"""
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
