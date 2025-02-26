@@ -50,7 +50,7 @@ class VindaPlugin(Star):
         yield event.plain_result(reply_message)
 
     @filter.command("订餐")
-    async def 订餐(self, event: AstrMessageEvent, args_str: str = None):
+    async def 订餐(self, event: AstrMessageEvent):
         """给自己或指定用户订餐"""
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
@@ -77,7 +77,7 @@ class VindaPlugin(Star):
         yield event.plain_result(reply_message)
 
     @filter.command("销餐", priority=1)
-    async def 销餐(self, event: AstrMessageEvent, args_str: str = None):
+    async def 销餐(self, event: AstrMessageEvent):
         """给自己或指定用户销餐"""
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
@@ -89,19 +89,18 @@ class VindaPlugin(Star):
 
     @filter.permission_type(PermissionType.ADMIN)
     @filter.command("帮销餐")
-    async def 帮销餐(self, event: AstrMessageEvent, args: list[str]):
+    async def 帮销餐(self, event: AstrMessageEvent, user_name: str = None):
         """给指定用户销餐"""
         if not user_name:
             yield event.plain_result("请指定要销餐的用户")
             return
         reply_message = ""
-        for user_name in args:
-            if user_name in user_dict:
-                reply_message += f"@{user_name} {self.vinda.pin_meal(user_dict.get(user_name))}"
-            elif user_name.isdigit():
-                reply_message += f"@{user_name} {self.vinda.pin_meal(user_name)}"
-            else:
-                reply_message += f"@{user_name} 还不是VIP"
+        if user_name in user_dict:
+            reply_message += f"@{user_name} {self.vinda.pin_meal(user_dict.get(user_name))}"
+        elif user_name.isdigit():
+            reply_message += f"@{user_name} {self.vinda.pin_meal(user_name)}"
+        else:
+            reply_message += f"@{user_name} 还不是VIP"
         yield event.plain_result(reply_message)
 
     @filter.command("二维码")
