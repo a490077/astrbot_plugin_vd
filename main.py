@@ -51,12 +51,12 @@ class VindaPlugin(Star):
         yield event.plain_result(reply_message)
 
     @filter.command("订餐")
-    async def 订餐(self, event: AstrMessageEvent, *args: str):
+    async def 订餐(self, event: AstrMessageEvent, args_str: str = None):
         """给自己或指定用户订餐"""
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
-        if args:
-            self.帮订餐(event, *args)
+        if args_str:
+            self.帮订餐(event, user_dict.keys() if args_str.upper() == "ALL" else args_str.split())
             return
         else:
             if sender_id not in wx_id_dict:
@@ -67,10 +67,8 @@ class VindaPlugin(Star):
 
     @filter.permission_type(PermissionType.ADMIN)
     @filter.command("帮订餐")
-    async def 帮订餐(self, event: AstrMessageEvent, *args: str):
+    async def 帮订餐(self, event: AstrMessageEvent, args: list[str]):
         """给指定用户订餐"""
-        if args[0] == "ALL":
-            args = user_dict.keys()
         reply_message = "订餐结果:"
         for user_name in args:
             if user_name in user_dict:
@@ -82,12 +80,13 @@ class VindaPlugin(Star):
         yield event.plain_result(reply_message)
 
     @filter.command("销餐")
-    async def 销餐(self, event: AstrMessageEvent, *args: str):
+    async def 销餐(self, event: AstrMessageEvent, args_str: str = None):
         """给自己或指定用户销餐"""
+        args_str = str(args_str)
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
-        if args:
-            self.帮销餐(event, *args)
+        if args_str:
+            self.帮销餐(event, user_dict.keys() if args_str.upper() == "ALL" else args_str.split())
             return
         else:
             if sender_id not in wx_id_dict:
@@ -98,10 +97,8 @@ class VindaPlugin(Star):
 
     @filter.permission_type(PermissionType.ADMIN)
     @filter.command("帮销餐")
-    async def 帮销餐(self, event: AstrMessageEvent, *args: str):
+    async def 帮销餐(self, event: AstrMessageEvent, args: list[str]):
         """给指定用户销餐"""
-        if args[0] == "ALL":
-            args = user_dict.keys()
         reply_message = "销餐结果:"
         for user_name in args:
             if user_name in user_dict:
