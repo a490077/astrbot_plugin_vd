@@ -2,6 +2,7 @@ from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
 from astrbot.api.star import Context, Star, register
 from astrbot.api import logger
 from data.plugins.astrbot_plugin_vd.vinda import Vinda
+from astrbot.core.star.filter.permission import PermissionType
 
 wx_id_dict = {
     "a490077": "郭鹏",
@@ -22,14 +23,14 @@ user_dict = {
     "冼玉梅": "151389",
     "赵坚华": "146262",
     "张智尧": "155347",
-    "杨耿楠": "155520",
-    "周润泽": "155892",
+    # "杨耿楠": "155520",
+    # "周润泽": "155892",
 }
 
 
 @register("vinda", "pp", "自用vinda助手", "1.0.0", "https://github.com/a490077/astrbot_plugin_vd")
 class VindaPlugin(Star):
-    """vinda助手, 需先绑定工号才能使用"""
+    """🤡vinda小助手🤡 V50开通VIP才能使用"""
 
     def __init__(self, context: Context, config: dict):
         super().__init__(context)
@@ -50,30 +51,64 @@ class VindaPlugin(Star):
         yield event.plain_result(reply_message)
 
     @filter.command("订餐")
-    async def 订餐(self, event: AstrMessageEvent):
-        """订餐命令"""
+    async def 订餐(self, event: AstrMessageEvent, args_str: str):
+        """给自己或指定用户订餐"""
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
-        if sender_id not in wx_id_dict:
-            yield event.plain_result(f"@{user_name} 你还不是VIP")
+        if args_str:
+            self.帮订餐(event, user_dict.keys() if args_str.upper() == "ALL" else args_str.split())
             return
-        reply_message = self.vinda.do_order(user_dict.get(wx_id_dict[sender_id]))
-        yield event.plain_result(f"@{user_name} {reply_message}")
+        else:
+            if sender_id not in wx_id_dict:
+                yield event.plain_result(f"@{user_name} 你还不是VIP")
+                return
+            reply_message = self.vinda.do_order(user_dict.get(wx_id_dict[sender_id]))
+            yield event.plain_result(f"@{user_name} {reply_message}")
+
+    @filter.permission_type(PermissionType.ADMIN)
+    async def 帮订餐(self, event: AstrMessageEvent, args: list[str]):
+        """给指定用户订餐"""
+        reply_message = "订餐结果:"
+        for user_name in args:
+            if user_name in user_dict:
+                reply_message += f"\n@{user_name} {self.vinda.do_order(user_dict.get(user_name))}"
+            elif user_name.isdigit():
+                reply_message += f"\n@{user_name} {self.vinda.do_order(user_name)}"
+            else:
+                reply_message += f"\n@{user_name} 还不是VIP"
+        yield event.plain_result(reply_message)
 
     @filter.command("销餐")
-    async def 销餐(self, event: AstrMessageEvent):
-        """销餐命令"""
+    async def 销餐(self, event: AstrMessageEvent, args_str: str):
+        """给自己或指定用户销餐"""
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
-        if sender_id not in wx_id_dict:
-            yield event.plain_result(f"@{user_name} 你还不是VIP")
+        if args_str:
+            self.帮销餐(event, user_dict.keys() if args_str.upper() == "ALL" else args_str.split())
             return
-        reply_message = self.vinda.pin_meal(user_dict.get(wx_id_dict[sender_id]))
-        yield event.plain_result(f"@{user_name} {reply_message}")
+        else:
+            if sender_id not in wx_id_dict:
+                yield event.plain_result(f"@{user_name} 你还不是VIP")
+                return
+            reply_message = self.vinda.pin_meal(user_dict.get(wx_id_dict[sender_id]))
+            yield event.plain_result(f"@{user_name} {reply_message}")
+
+    @filter.permission_type(PermissionType.ADMIN)
+    async def 帮销餐(self, event: AstrMessageEvent, args: list[str]):
+        """给指定用户销餐"""
+        reply_message = "销餐结果:"
+        for user_name in args:
+            if user_name in user_dict:
+                reply_message += f"\n@{user_name} {self.vinda.pin_meal(user_dict.get(user_name))}"
+            elif user_name.isdigit():
+                reply_message += f"\n@{user_name} {self.vinda.pin_meal(user_name)}"
+            else:
+                reply_message += f"\n@{user_name} 还不是VIP"
+        yield event.plain_result(reply_message)
 
     @filter.command("二维码")
     async def 二维码(self, event: AstrMessageEvent):
-        """获取自己的二维码"""
+        """获取自己的用餐二维码数据"""
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
         if sender_id not in wx_id_dict:
