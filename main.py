@@ -36,7 +36,6 @@ class VindaPlugin(Star):
         super().__init__(context)
         self.config = config
         self.vinda = Vinda(self.config)
-        logger.info(self.config)
 
     @filter.command("菜单")
     async def 菜单(self, event: AstrMessageEvent):
@@ -57,7 +56,7 @@ class VindaPlugin(Star):
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
         if args_str:
-            self.帮订餐(event, user_dict.keys() if args_str == "ALL" else args_str.strip().split())
+            await self.帮订餐(event, user_dict.keys() if args_str == "ALL" else args_str.strip().split())
             logger.info("已帮订餐")
             logger.info(user_dict.keys() if args_str == "ALL" else args_str.strip().split())
         else:
