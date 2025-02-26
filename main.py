@@ -137,7 +137,6 @@ class VindaPlugin(Star):
         logger.info("get_menu...")
         self.菜单(event)
         event.stop_event()
-        yield
 
     @filter.llm_tool()
     async def looklook(self, event: AstrMessageEvent):
@@ -146,4 +145,3 @@ class VindaPlugin(Star):
         logger.info("looklook...")
         self.稽查(event)
         event.stop_event()
-        yield
