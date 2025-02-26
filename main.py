@@ -54,15 +54,11 @@ class VindaPlugin(Star):
     async def 订餐(self, event: AstrMessageEvent, args_str: str = None):
         """给自己或指定用户订餐"""
         logger.info(f"参数: {args_str}")
-        logger.info(event.message_obj.message)
-        logger.info(event.message_obj.message_str)
-        logger.info(event.message_obj.raw_message)
-        args_str = str(args_str)
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
         if args_str:
-            self.帮订餐(event, user_dict.keys() if args_str.upper() == "ALL" else args_str.split())
-            return
+            self.帮订餐(event, user_dict.keys() if args_str == "ALL" else args_str.strip().split())
+            logger.info("已帮订餐")
         else:
             if sender_id not in wx_id_dict:
                 yield event.plain_result(f"@{user_name} 你还不是VIP")
@@ -87,12 +83,11 @@ class VindaPlugin(Star):
     @filter.command("销餐", priority=1)
     async def 销餐(self, event: AstrMessageEvent, args_str: str = None):
         """给自己或指定用户销餐"""
-        args_str = str(args_str)
         sender_id = event.get_sender_id()
         user_name = event.get_sender_name()
         if args_str:
-            self.帮销餐(event, user_dict.keys() if args_str.upper() == "ALL" else args_str.split())
-            return
+            self.帮销餐(event, user_dict.keys() if args_str == "ALL" else args_str.split())
+
         else:
             if sender_id not in wx_id_dict:
                 yield event.plain_result(f"@{user_name} 你还不是VIP")
