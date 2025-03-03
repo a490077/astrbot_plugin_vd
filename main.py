@@ -16,6 +16,7 @@ wx_id_dict = {
     "wxid_qh51xgdw485d22": "赵坚华",
     "wxid_x2j90wkliqbj21": "梁嘉卿",
     "wxid_2z1wtpv969x121": "张智尧",
+    "wxid_xhhx101k3p2i21": "冼玉梅",
 }
 
 user_dict = {
@@ -44,7 +45,7 @@ class VindaPlugin(Star):
     async def 菜单(self, event: AstrMessageEvent):
         """获取今日菜单"""
         logger.info("菜单...")
-        self.订餐(event)
+        yield self.订餐(event)
         reply_message = self.vinda.菜单()
         yield event.plain_result(reply_message)
 
@@ -131,3 +132,9 @@ class VindaPlugin(Star):
         logger.info("查询...")
         reply_message = self.vinda.查询(name)
         yield event.plain_result(reply_message)
+
+    @filter.command("点餐")
+    async def 点餐(self, event: AstrMessageEvent):
+        """给自己点餐"""
+        logger.info("点餐...")
+        self.订餐(event)
