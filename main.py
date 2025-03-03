@@ -137,4 +137,4 @@ class VindaPlugin(Star):
     async def 点餐(self, event: AstrMessageEvent):
         """给自己点餐"""
         logger.info("点餐...")
-        self.订餐(event)
+        await self.订餐(event)
