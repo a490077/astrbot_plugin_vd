@@ -133,8 +133,15 @@ class VindaPlugin(Star):
         reply_message = self.vinda.查询(name)
         yield event.plain_result(reply_message)
 
-    @filter.command("点餐")
-    async def 点餐(self, event: AstrMessageEvent):
-        """给自己点餐"""
-        logger.info("点餐...")
-        await self.订餐(event)
+    @filter.command("test1")
+    async def test1(self, event: AstrMessageEvent):
+        """test1"""
+        logger.info("test1...")
+        yield event.plain_result("test1...")
+
+    @filter.command("test2")
+    async def test2(self, event: AstrMessageEvent):
+        """test2"""
+        logger.info("test2...")
+        logger.info(event)
+        self.test1(event)
