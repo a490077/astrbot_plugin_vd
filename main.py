@@ -144,5 +144,5 @@ class VindaPlugin(Star):
     async def test2(self, event: AstrMessageEvent):
         """test2"""
         logger.info("test2...")
-        async for _ in await self.test1(event):
+        async for _ in self.test1(event):
             yield
