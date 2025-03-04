@@ -57,74 +57,46 @@ class VindaPlugin(Star):
         yield event.plain_result(reply_message)
 
     @filter.command("订餐")
-    async def 订餐(self, event: AstrMessageEvent):
-        """给自己订餐"""
+    async def 订餐(self, event: AstrMessageEvent, args_str: str = None):
+        """给自己或指定用户订餐"""
         logger.info("订餐...")
-        sender_id = event.get_sender_id()
-        user_name = event.get_sender_name()
-        if sender_id not in wx_id_dict:
-            yield event.plain_result(f"@{user_name} 你还不是VIP")
-            return
-        reply_message = self.vinda.do_order(user_dict.get(wx_id_dict[sender_id]))
-        yield event.plain_result(f"@{user_name} {reply_message}")
-
-    @filter.permission_type(PermissionType.ADMIN)
-    @filter.command("帮订餐")
-    async def 帮订餐(self, event: AstrMessageEvent, user_name: str = None):
-        """给指定用户订餐"""
-        logger.info("帮订餐...")
-        if not user_name:
-            yield event.plain_result("请指定要订餐的用户")
-            return
-        reply_message = ""
-        if user_name in user_dict:
-            reply_message = f"@{user_name} {self.vinda.do_order(user_dict.get(user_name))}"
-        elif user_name.isdigit():
-            reply_message = f"@{user_name} {self.vinda.do_order(user_name)}"
-        else:
-            reply_message = f"@{user_name} 还不是VIP"
-        yield event.plain_result(reply_message)
+        async for result in self._CMD(event, self.vinda.do_order, args_str):
+            yield result
 
     @filter.command("销餐")
     async def 销餐(self, event: AstrMessageEvent, args_str: str = None):
-        """给自己销餐"""
+        """给自己或指定用户销餐"""
         logger.info("销餐...")
-        sender_id = event.get_sender_id()
-        user_name = event.get_sender_name()
-        if sender_id not in wx_id_dict:
-            yield event.plain_result(f"@{user_name} 你还不是VIP")
-            return
-        reply_message = self.vinda.pin_meal(user_dict.get(wx_id_dict[sender_id]))
-        yield event.plain_result(f"@{user_name} {reply_message}")
+        async for result in self._CMD(event, self.vinda.pin_meal, args_str):
+            yield result
 
-    @filter.permission_type(PermissionType.ADMIN)
-    @filter.command("帮销餐")
-    async def 帮销餐(self, event: AstrMessageEvent, user_name: str = None):
-        """给指定用户销餐"""
-        logger.info("帮销餐...")
-        if not user_name:
-            yield event.plain_result("请指定要销餐的用户")
-            return
-        reply_message = ""
-        if user_name in user_dict:
-            reply_message += f"@{user_name} {self.vinda.pin_meal(user_dict.get(user_name))}"
-        elif user_name.isdigit():
-            reply_message += f"@{user_name} {self.vinda.pin_meal(user_name)}"
+    async def _CMD(self, event: AstrMessageEvent, cmd: function, args_str: str = None):
+        """执行命令核心代码, 传入命令和目标用户, 如果没有目标用户则默认为发送者, 只有管理员可以操作其它用户"""
+        sender_id = event.get_sender_id()
+        sender_name = event.get_sender_name()
+        if args_str:
+            if not event.is_admin():
+                yield event.plain_result("没有权限!...")
+                return
         else:
-            reply_message += f"@{user_name} 还不是VIP"
+            args_str = wx_id_dict.get(sender_id, sender_name)
+        args_list = str(args_str).split()
+        reply_message = "🤡🤡🤡"
+        for user_name in args_list:
+            if user_name in user_dict:
+                reply_message += f"\n@{user_name} {cmd(user_dict.get(user_name))}"
+            elif user_name.isdigit():
+                reply_message += f"\n@{user_name} {cmd(user_name)}"
+            else:
+                reply_message += f"\n@{user_name} 你还不是VIP"
         yield event.plain_result(reply_message)
 
     @filter.command("二维码")
-    async def 二维码(self, event: AstrMessageEvent):
+    async def 二维码(self, event: AstrMessageEvent, args_str: str = None):
         """获取自己的用餐二维码数据"""
         logger.info("二维码...")
-        sender_id = event.get_sender_id()
-        user_name = event.get_sender_name()
-        if sender_id not in wx_id_dict:
-            yield event.plain_result(f"@{user_name} 你还不是VIP")
-            return
-        reply_message = self.vinda.get_qr_code_data(user_dict.get(wx_id_dict[sender_id]))
-        yield event.plain_result(f"@{user_name} {reply_message}")
+        async for result in self._CMD(event, self.vinda.get_qr_code_data, args_str):
+            yield result
 
     @filter.command("查询")
     async def 查询(self, event: AstrMessageEvent, name: str = None):
@@ -132,17 +104,3 @@ class VindaPlugin(Star):
         logger.info("查询...")
         reply_message = self.vinda.查询(name)
         yield event.plain_result(reply_message)
-
-    @filter.permission_type(PermissionType.ADMIN)
-    @filter.command("test1")
-    async def test1(self, event: AstrMessageEvent):
-        """test1"""
-        logger.info("test1...")
-        yield event.plain_result("test1...")
-
-    @filter.command("test2")
-    async def test2(self, event: AstrMessageEvent):
-        """test2"""
-        logger.info("test2...")
-        async for result in self.test1(event):
-            yield result
