@@ -52,7 +52,8 @@ class Vinda:
                 self.headers["Cookie"] = response.text
                 self.last_update_time = datetime.datetime.now()
         except Exception as e:
-            print(e)
+            logger.info("Error:")
+            logger.info(e)
 
     # 获取今日菜单id
     def get_menu_id(self):
@@ -65,7 +66,8 @@ class Vinda:
             data = response.json()
             return data["data"][0]["menuId"] + "-1"
         except requests.RequestException as e:
-            print("Error:", e)
+            logger.info("Error:")
+            logger.info(e)
             return None
 
     # 获取今日是否订餐
@@ -82,16 +84,13 @@ class Vinda:
             # 发送HTTP请求
             response = requests.get(url, headers=self.headers)
             result = response.json()
-            logger.info("查询是否订餐: ")
-            logger.info(result)
             # 检查响应结果
-            if result["code"] == 200 and result["success"]:
-                if isinstance(result["data"]["myOrders"], list) and len(result["data"]["myOrders"]) > 0:
-                    for order in result["data"]["myOrders"]:
-                        if order["date"] == get_year_month_day():
-                            return "已订餐 🐶"
-                    return "未订餐 🤡"
-                else:
+            if result.get("code") == 200 and result.get("success"):
+                orders = result.get("data", {}).get("myOrders", [])
+                if isinstance(orders, list):
+                    today = get_year_month_day()
+                    if any(order.get("date") == today for order in orders):
+                        return "已订餐 🐶"
                     return "未订餐 🤡"
             else:
                 raise Exception("请求失败或返回数据格式错误")
@@ -111,7 +110,8 @@ class Vinda:
             if data.get("success"):
                 return data.get("data")
         except requests.RequestException as error:
-            print(f"Error: {error}")
+            logger.info("Error:")
+            logger.info(error)
             return "获取二维码失败"
 
     # 订餐指定id
@@ -134,7 +134,8 @@ class Vinda:
             logger.info(data)
             return data.get("msg", "未知错误")
         except requests.RequestException as e:
-            print("Error:", e)
+            logger.info("Error:")
+            logger.info(e)
             return "订餐失败"
 
     # 获取指定用户已订餐id
@@ -150,7 +151,8 @@ class Vinda:
                     if order["date"] == get_year_month_day():
                         return order["orderId"]
         except requests.RequestException as error:
-            print(f"Error: {error}")
+            logger.info("Error:")
+            logger.info(error)
             return "获取订餐信息失败"
 
     # 销餐指定id
@@ -163,7 +165,7 @@ class Vinda:
             return order_id
         url = f"{self.shitang_url}/api/rst-wx/weiDaWx/pinMeal"
         payload = {"cardCode": vinda_id, "orderIds": [order_id]}
-        # print(payload)
+        # logger.info(payload)
         try:
             self.headers["Content-Type"] = "application/json;charset=utf-8"
             response = requests.post(url, headers=self.headers, data=json.dumps(payload))
@@ -173,7 +175,8 @@ class Vinda:
             logger.info(data)
             return data.get("msg", "未知错误")
         except requests.RequestException as error:
-            print(f"Error: {error}")
+            logger.info("Error:")
+            logger.info(error)
             return "销餐失败"
 
     # 获取今日维达菜单
@@ -193,7 +196,7 @@ class Vinda:
                 today_dishes = result["data"][0]
                 return f"今日菜单: {today_dishes['lunchMenuName']}{today_dishes['lunchSoupName']}"
             else:
-                print(result)
+                logger.info(result)
                 raise Exception("请求失败或返回数据格式错误")
         except Exception as e:
             return "获取失败，请稍后再试。"
