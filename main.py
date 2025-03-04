@@ -81,6 +81,7 @@ class VindaPlugin(Star):
         else:
             args_str = wx_id_dict.get(sender_id, sender_name)
         args_list = str(args_str).split()
+        logger.info(f"执行命令: {cmd.__name__}, 参数: {args_list}")
         reply_message = "🤡🤡🤡"
         for user_name in args_list:
             if user_name in user_dict:
