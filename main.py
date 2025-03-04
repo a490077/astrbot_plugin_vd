@@ -133,6 +133,7 @@ class VindaPlugin(Star):
         reply_message = self.vinda.查询(name)
         yield event.plain_result(reply_message)
 
+    @filter.permission_type(PermissionType.ADMIN)
     @filter.command("test1")
     async def test1(self, event: AstrMessageEvent):
         """test1"""
@@ -143,4 +144,5 @@ class VindaPlugin(Star):
     async def test2(self, event: AstrMessageEvent):
         """test2"""
         logger.info("test2...")
-        self.test1(event)
+        async for _ in await self.test1(event):
+            yield
