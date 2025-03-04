@@ -3,6 +3,7 @@ from astrbot.api.star import Context, Star, register
 from astrbot.api import logger
 from data.plugins.astrbot_plugin_vd.vinda import Vinda
 from astrbot.core.star.filter.permission import PermissionType
+import re
 
 wx_id_dict = {
     "a490077": "郭鹏",
@@ -80,7 +81,8 @@ class VindaPlugin(Star):
                 return
         else:
             args_str = wx_id_dict.get(sender_id, sender_name)
-        args_list = str(args_str).split()
+        separators = r"[,\s;|:#]+"  # 逗号、空格、分号、竖线、井号 作为分隔符
+        args_list = re.split(separators, args_str)
         logger.info(f"执行命令: {cmd.__name__}, 参数: {args_list}")
         reply_message = "🤡🤡🤡"
         for user_name in args_list:
@@ -105,8 +107,3 @@ class VindaPlugin(Star):
         logger.info("查询...")
         reply_message = self.vinda.查询(name)
         yield event.plain_result(reply_message)
-
-    @filter.command("test")
-    async def test(self, event: AstrMessageEvent, *args):
-        """test"""
-        logger.info(args)
