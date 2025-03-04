@@ -107,6 +107,6 @@ class VindaPlugin(Star):
         yield event.plain_result(reply_message)
 
     @filter.command("test")
-    async def 查询(self, event: AstrMessageEvent, *args):
+    async def test(self, event: AstrMessageEvent, *args):
         """test"""
         logger.info(args)
