@@ -2,6 +2,7 @@ import requests
 import datetime
 import json
 import urllib.parse
+from astrbot.api import logger
 
 
 # 获取年-月-日
@@ -94,7 +95,7 @@ class Vinda:
             else:
                 raise Exception("请求失败或返回数据格式错误")
         except Exception as e:
-            print("Error:", e)
+            logger.info("Error:", e)
             return "获取失败 ❌"
 
     # 获取指定id二维码数据
@@ -127,6 +128,8 @@ class Vinda:
             )
             response.raise_for_status()
             data = response.json()
+            logger.info("订餐请求结果: ")
+            logger.info(data)
             return data.get("msg", "未知错误")
         except requests.RequestException as e:
             print("Error:", e)
