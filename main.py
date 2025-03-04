@@ -70,7 +70,7 @@ class VindaPlugin(Star):
         async for result in self._CMD(event, self.vinda.pin_meal, args_str):
             yield result
 
-    async def _CMD(self, event: AstrMessageEvent, cmd: function, args_str: str = None):
+    async def _CMD(self, event: AstrMessageEvent, cmd, args_str: str = None):
         """执行命令核心代码, 传入命令和目标用户, 如果没有目标用户则默认为发送者, 只有管理员可以操作其它用户"""
         sender_id = event.get_sender_id()
         sender_name = event.get_sender_name()
