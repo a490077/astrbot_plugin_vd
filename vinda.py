@@ -167,7 +167,8 @@ class Vinda:
             response = requests.post(url, headers=self.headers, data=json.dumps(payload))
             response.raise_for_status()
             data = response.json()
-            print(data)
+            logger.info("销餐请求结果: ")
+            logger.info(data)
             return data.get("msg", "未知错误")
         except requests.RequestException as error:
             print(f"Error: {error}")
