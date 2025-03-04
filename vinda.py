@@ -82,7 +82,8 @@ class Vinda:
             # 发送HTTP请求
             response = requests.get(url, headers=self.headers)
             result = response.json()
-
+            logger.info("查询是否订餐: ")
+            logger.info(result)
             # 检查响应结果
             if result["code"] == 200 and result["success"]:
                 if isinstance(result["data"]["myOrders"], list) and len(result["data"]["myOrders"]) > 0:
@@ -95,7 +96,8 @@ class Vinda:
             else:
                 raise Exception("请求失败或返回数据格式错误")
         except Exception as e:
-            logger.info("Error:", e)
+            logger.info("Error:")
+            logger.info(e)
             return "获取失败 ❌"
 
     # 获取指定id二维码数据
