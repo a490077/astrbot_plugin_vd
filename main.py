@@ -116,6 +116,7 @@ class VindaPlugin(Star):
         """
         async for result in self.稽查(event):
             yield result
+        event.stop_event()
 
     @filter.llm_tool()
     async def check_menu(self, event: AstrMessageEvent):
@@ -124,3 +125,4 @@ class VindaPlugin(Star):
         """
         async for result in self.菜单(event):
             yield result
+        event.stop_event()
