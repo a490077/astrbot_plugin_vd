@@ -4,6 +4,7 @@ from astrbot.api import logger
 from data.plugins.astrbot_plugin_vd.vinda import Vinda
 from astrbot.core.star.filter.permission import PermissionType
 import re
+import requests
 
 wx_id_dict = {
     "a490077": "郭鹏",
@@ -19,6 +20,7 @@ wx_id_dict = {
     "wxid_2z1wtpv969x121": "张智尧",
     "wxid_xhhx101k3p2i21": "冼玉梅",
     "wxid_xy8jnnhazqed22": "周润泽",
+    "wxid_sniw1pb0cgya22": "田友晨",
 }
 
 user_dict = {
@@ -82,7 +84,7 @@ class VindaPlugin(Star):
         else:
             args_str = wx_id_dict.get(sender_id, sender_name)
         separators = r"[,\s;|:#]+"  # 逗号、空格、分号、竖线、井号 作为分隔符
-        args_list = re.split(separators, args_str)
+        args_list = user_dict.keys() if args_str == "ALL" else re.split(separators, args_str)
         logger.info(f"执行命令: {cmd.__name__}, 参数: {args_list}")
         reply_message = "🤡🤡🤡"
         for user_name in args_list:
@@ -96,10 +98,26 @@ class VindaPlugin(Star):
 
     @filter.command("二维码")
     async def 二维码(self, event: AstrMessageEvent, args_str: str = None):
-        """获取自己的用餐二维码数据"""
+        """获取用餐二维码"""
         logger.info("二维码...")
-        async for result in self._CMD(event, self.vinda.get_qr_code_data, args_str):
-            yield result
+        sender_id = event.get_sender_id()
+        sender_name = event.get_sender_name()
+        if args_str:
+            if not event.is_admin():
+                yield event.plain_result("没有权限!...")
+                return
+        else:
+            args_str = wx_id_dict.get(sender_id, sender_name)
+        if args_str in user_dict:
+            args_str = user_dict.get(args_str)  # 参数转为工号
+        elif not args_str.isdigit():
+            yield event.plain_result(f"@{args_str} 你还不是VIP")
+            return
+        qr = self.vinda.get_qr_code_data(args_str)  # 返回QR对象
+        if qr:
+            yield event.image_result(qr)
+        else:
+            yield event.plain_result("获取二维码失败")
 
     @filter.command("查询")
     async def 查询(self, event: AstrMessageEvent, name: str = None):
@@ -119,7 +137,27 @@ class VindaPlugin(Star):
     @filter.llm_tool()
     async def check_menu(self, event: AstrMessageEvent):
         """无需参数, 返回饭堂的菜单
-        用户不知道吃什么的时候可以以此结果回复
+        用户询问吃什么的时候可以以此结果回复
         """
         async for result in self.菜单(event):
             yield result
+
+    @filter.event_message_type(filter.EventMessageType.ALL)
+    async def v_me_50(self, event: AstrMessageEvent):
+        """疯狂星期四V50"""
+        pattern = r"(\W[Vv]我?50\D|疯狂星期四|今天星期四)"
+        if bool(re.search(pattern, event.message_str)):
+            url = "https://vme.im/api?format=text"
+            try:
+                response = requests.get(url, timeout=5)  # 设置超时防止长时间等待
+                response.raise_for_status()  # 检查 HTTP 响应状态码
+                result_text = response.text  # 直接获取文本
+            except requests.exceptions.RequestException as e:
+                result_text = f"获取信息失败: {e}"
+
+            yield event.plain_result(result_text)
+
+    @filter.command("摸鱼")
+    async def 摸鱼(self, event: AstrMessageEvent):
+        """摸鱼日历"""
+        yield event.image_result("https://api.52vmy.cn/api/wl/moyu")

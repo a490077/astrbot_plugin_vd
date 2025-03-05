@@ -3,6 +3,7 @@ import datetime
 import json
 import urllib.parse
 from astrbot.api import logger
+from pyqrcode import QRCode
 
 
 # 获取年-月-日
@@ -108,11 +109,22 @@ class Vinda:
             response.raise_for_status()
             data = response.json()
             if data.get("success"):
-                return data.get("data")
+                return self.create_qr_code(data.get("data"))
         except requests.RequestException as error:
             logger.info("Error:")
             logger.info(error)
-            return "获取二维码失败"
+            return None
+
+    # 创建二维码图片对象
+    def create_qr_code(self, text):
+        try:
+            qr_code = QRCode(text)
+            qr_code.png("qrcode.png", scale=10)
+            return "qrcode.png"
+        except Exception as e:
+            logger.info("Error:")
+            logger.info(e)
+            return None
 
     # 订餐指定id
     def do_order(self, vinda_id):
