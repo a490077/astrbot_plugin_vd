@@ -110,7 +110,7 @@ class VindaPlugin(Star):
             args_str = wx_id_dict.get(sender_id, sender_name)
         if args_str in user_dict:
             args_str = user_dict.get(args_str)  # 参数转为工号
-        elif not args_str.isdigit():
+        elif not str(args_str).isdigit():
             yield event.plain_result(f"@{args_str} 你还不是VIP")
             return
         qr = self.vinda.get_qr_code_data(args_str)  # 返回QR对象

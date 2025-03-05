@@ -119,7 +119,6 @@ class Vinda:
     def create_qr_code(self, text):
         try:
             qr_code = QRCode(text)
-            logger.info(qr_code)
             qr_code.png("qrcode.png", scale=10)
             return "qrcode.png"
         except Exception as e:
