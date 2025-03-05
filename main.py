@@ -47,7 +47,6 @@ class VindaPlugin(Star):
     async def 菜单(self, event: AstrMessageEvent):
         """获取今日菜单"""
         logger.info("菜单...")
-        yield self.订餐(event)
         reply_message = self.vinda.菜单()
         yield event.plain_result(reply_message)
 
@@ -116,7 +115,6 @@ class VindaPlugin(Star):
         """
         async for result in self.稽查(event):
             yield result
-        event.stop_event()
 
     @filter.llm_tool()
     async def check_menu(self, event: AstrMessageEvent):
@@ -125,4 +123,3 @@ class VindaPlugin(Star):
         """
         async for result in self.菜单(event):
             yield result
-        event.stop_event()
