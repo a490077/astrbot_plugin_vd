@@ -18,6 +18,7 @@ wx_id_dict = {
     "wxid_x2j90wkliqbj21": "梁嘉卿",
     "wxid_2z1wtpv969x121": "张智尧",
     "wxid_xhhx101k3p2i21": "冼玉梅",
+    "wxid_xy8jnnhazqed22": "周润泽",
 }
 
 user_dict = {
@@ -28,7 +29,7 @@ user_dict = {
     "赵坚华": "146262",
     "张智尧": "155347",
     # "杨耿楠": "155520",
-    # "周润泽": "155892",
+    "周润泽": "155892",
 }
 
 
@@ -107,3 +108,19 @@ class VindaPlugin(Star):
         logger.info("查询...")
         reply_message = self.vinda.查询(name)
         yield event.plain_result(reply_message)
+
+    @filter.llm_tool()
+    async def check_order_meals(self, event: AstrMessageEvent):
+        """无需参数, 返回各成员的订餐情况。
+        或者用户问到:谁是小丑?时也可以以此结果回复
+        """
+        async for result in self.稽查(event):
+            yield result
+
+    @filter.llm_tool()
+    async def check_order_meals(self, event: AstrMessageEvent):
+        """无需参数, 返回饭堂的菜单
+        用户不知道吃什么的时候可以以此结果回复
+        """
+        async for result in self.菜单(event):
+            yield result
