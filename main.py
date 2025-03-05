@@ -118,7 +118,7 @@ class VindaPlugin(Star):
             yield result
 
     @filter.llm_tool()
-    async def check_order_meals(self, event: AstrMessageEvent):
+    async def check_menu(self, event: AstrMessageEvent):
         """无需参数, 返回饭堂的菜单
         用户不知道吃什么的时候可以以此结果回复
         """
