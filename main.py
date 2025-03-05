@@ -150,10 +150,8 @@ class VindaPlugin(Star):
             url = "https://vme.im/api?format=text"
             try:
                 response = requests.get(url)  # 设置超时防止长时间等待
-                logger.info(response)
                 response.raise_for_status()  # 检查 HTTP 响应状态码
                 result_text = response.text  # 直接获取文本
-                logger.info(response.text)
             except requests.exceptions.RequestException as e:
                 result_text = f"获取信息失败: {e}"
 
