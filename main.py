@@ -111,10 +111,12 @@ class VindaPlugin(Star):
     @filter.llm_tool()
     async def check_order_meals(self, event: AstrMessageEvent):
         """无需参数, 返回各成员的订餐情况。
-        或者用户问到:谁是小丑?时也可以以此结果回复
+        或者用户问到:谁是小丑?时也可以运行此函数, 返回的结果是一个名单
+        如果有人名字后面有🤡标识, 那么祝贺他获得小丑称号
+        再次返回结果时请返回此函数的原始结果, 并在末尾追加你的祝贺内容!!
         """
         async for result in self.稽查(event):
-            yield result
+            return result
 
     @filter.llm_tool()
     async def check_menu(self, event: AstrMessageEvent):
