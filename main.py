@@ -113,7 +113,7 @@ class VindaPlugin(Star):
         elif not str(args_str).isdigit():
             yield event.plain_result(f"@{args_str} 你还不是VIP")
             return
-        qr = self.vinda.get_qr_code_data(args_str)  # 返回QR对象
+        qr = self.vinda.get_qr_code_data(args_str)  # 返回二维码路径
         if qr:
             yield event.image_result(qr)
         else:
@@ -145,7 +145,7 @@ class VindaPlugin(Star):
     @filter.event_message_type(filter.EventMessageType.ALL)
     async def v_me_50(self, event: AstrMessageEvent):
         """疯狂星期四V50"""
-        pattern = r"(\W[Vv]我?50\D|疯狂星期四|今天星期四)"
+        pattern = r"([Vv]我?50|疯狂星期四|今天星期四)"
         if bool(re.search(pattern, event.message_str)):
             url = "https://vme.im/api?format=text"
             try:
