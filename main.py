@@ -5,34 +5,22 @@ from data.plugins.astrbot_plugin_vd.vinda import Vinda
 from astrbot.core.star.filter.permission import PermissionType
 import re
 import requests
+import json
 
-wx_id_dict = {
-    "a490077": "郭鹏",
-    "Z7weilaikeji": "赵坚华",
-    "JJJJJay53": "梁嘉卿",
-    "xian-yumei": "冼玉梅",
-    "T403823735": "田友晨",
-    "_yyyy_-": "张智尧",
-    "YGN0313": "杨耿楠",
-    "ROTWbla": "周润泽",
-    "wxid_qh51xgdw485d22": "赵坚华",
-    "wxid_x2j90wkliqbj21": "梁嘉卿",
-    "wxid_2z1wtpv969x121": "张智尧",
-    "wxid_xhhx101k3p2i21": "冼玉梅",
-    "wxid_xy8jnnhazqed22": "周润泽",
-    "wxid_sniw1pb0cgya22": "田友晨",
-}
 
-user_dict = {
-    "郭鹏": "130556",
-    "田友晨": "160994",
-    "梁嘉卿": "155826",
-    "冼玉梅": "151389",
-    "赵坚华": "146262",
-    "张智尧": "155347",
-    # "杨耿楠": "155520",
-    "周润泽": "155892",
-}
+# 读取 JSON 配置文件
+def load_config(file_path="config.json"):
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            return json.load(file)  # 直接返回字典
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"配置文件错误: {e}")
+        return {}
+
+
+conf = load_config()
+wx_id_dict = conf.get("wx_id_dict", {})
+user_dict = conf.get("user_dict", {})
 
 
 @register("vinda", "pp", "自用vinda助手", "1.0.0", "https://github.com/a490077/astrbot_plugin_vd")
