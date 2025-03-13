@@ -6,6 +6,7 @@ from astrbot.core.star.filter.permission import PermissionType
 import re
 import requests
 import json
+import datetime
 
 
 # 读取 JSON 配置文件
@@ -133,8 +134,10 @@ class VindaPlugin(Star):
     @filter.event_message_type(filter.EventMessageType.ALL)
     async def v_me_50(self, event: AstrMessageEvent):
         """疯狂星期四V50"""
-        pattern = r"([Vv]我?50|疯狂星期四|今天星期四)"
-        if bool(re.search(pattern, event.message_str)):
+        today = datetime.datetime.today()
+        today.isoweekday()
+        pattern = r"([Vv]我?50|疯狂星期四|今天星期四|[Kk][Ff][Cc]|星期几|肯德基)"
+        if today.isoweekday() == 4 and bool(re.search(pattern, event.message_str)):
             url = "https://vme.im/api?format=text"
             try:
                 response = requests.get(url)  # 设置超时防止长时间等待
