@@ -14,20 +14,17 @@ from pathlib import Path
 def load_config(file_path="config.json"):
     try:
         with open(file_path, "r", encoding="utf-8") as file:
-
-            current_path = Path.cwd()  # 获取当前工作目录
-            logger.info(f"当前工作目录: {current_path}")
-            script_path = Path(__file__).parent  # pathlib 方法
-            logger.info(f"脚本所在目录: {script_path}")
-            logger.info(f"加载配置文件: {file_path}")
-            logger.info(f"配置文件内容: {file}")
             return json.load(file)  # 直接返回字典
     except (FileNotFoundError, json.JSONDecodeError) as e:
         logger.error(f"配置文件错误: {e}")
         return {}
 
 
-conf = load_config()
+current_path = Path.cwd()  # 获取当前工作目录
+logger.info(f"当前工作目录: {current_path}")
+script_path = Path(__file__).parent  # pathlib 方法
+logger.info(f"脚本所在目录: {script_path}")
+conf = load_config(script_path / "config.json")
 wx_id_dict = conf.get("wx_id_dict", {})
 user_dict = conf.get("user_dict", {})
 
