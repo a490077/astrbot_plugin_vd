@@ -13,9 +13,11 @@ import datetime
 def load_config(file_path="config.json"):
     try:
         with open(file_path, "r", encoding="utf-8") as file:
+            logger.info(f"加载配置文件: {file_path}")
+            logger.info(f"配置文件内容: {file}")
             return json.load(file)  # 直接返回字典
     except (FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"配置文件错误: {e}")
+        logger.error(f"配置文件错误: {e}")
         return {}
 
 
