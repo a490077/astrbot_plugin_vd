@@ -7,12 +7,18 @@ import re
 import requests
 import json
 import datetime
+from pathlib import Path
 
 
 # 读取 JSON 配置文件
 def load_config(file_path="config.json"):
     try:
         with open(file_path, "r", encoding="utf-8") as file:
+
+            current_path = Path.cwd()  # 获取当前工作目录
+            logger.info(f"当前工作目录: {current_path}")
+            script_path = Path(__file__).parent  # pathlib 方法
+            logger.info(f"脚本所在目录: {script_path}")
             logger.info(f"加载配置文件: {file_path}")
             logger.info(f"配置文件内容: {file}")
             return json.load(file)  # 直接返回字典
@@ -24,10 +30,6 @@ def load_config(file_path="config.json"):
 conf = load_config()
 wx_id_dict = conf.get("wx_id_dict", {})
 user_dict = conf.get("user_dict", {})
-
-logger.info(f"conf: {conf}")
-logger.info(f"wx_id_dict: {wx_id_dict}")
-logger.info(f"user_dict: {user_dict}")
 
 
 @register("vinda", "pp", "自用vinda助手", "1.0.0", "https://github.com/a490077/astrbot_plugin_vd")
