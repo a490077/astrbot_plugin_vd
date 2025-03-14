@@ -23,6 +23,9 @@ conf = load_config()
 wx_id_dict = conf.get("wx_id_dict", {})
 user_dict = conf.get("user_dict", {})
 
+logger.info(f"wx_id_dict: {wx_id_dict}")
+logger.info(f"user_dict: {user_dict}")
+
 
 @register("vinda", "pp", "自用vinda助手", "1.0.0", "https://github.com/a490077/astrbot_plugin_vd")
 class VindaPlugin(Star):
