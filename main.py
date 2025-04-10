@@ -20,10 +20,8 @@ def load_config(file_path="config.json"):
         return {}
 
 
-current_path = Path.cwd()  # 获取当前工作目录
-logger.info(f"当前工作目录: {current_path}")
 script_path = Path(__file__).parent  # pathlib 方法
-logger.info(f"脚本所在目录: {script_path}")
+logger.info(f"当前文件目录: {script_path}")
 conf = load_config(script_path / "config.json")
 wx_id_dict = conf.get("wx_id_dict", {})
 user_dict = conf.get("user_dict", {})
@@ -157,3 +155,24 @@ class VindaPlugin(Star):
     async def 摸鱼(self, event: AstrMessageEvent):
         """摸鱼日历"""
         yield event.image_result("https://api.52vmy.cn/api/wl/moyu")
+
+    @filter.command("元宝")
+    async def 元宝(self, event: AstrMessageEvent):
+        """元宝查询"""
+        try:
+            url = "https://api.pp052.top:88/get_rxjh"
+            result = requests.get(url).json()
+            result_text = ""
+
+            元宝 = 0
+            pattern = r"\d+_[1-4]"
+            for key, value in result.items():
+                if re.match(pattern, key):
+                    元宝 += value.get("元宝", 0)
+                    result_text += f"区服: {key}, 💰: {value.get('元宝',0)}\n"
+
+            result_text += f"总元宝: {元宝}"
+            image_url = await self.text_to_image(result_text)
+            yield event.image_result(image_url)
+        except Exception as e:
+            yield event.plain_result("获取失败")
