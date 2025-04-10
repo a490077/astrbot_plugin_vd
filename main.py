@@ -171,7 +171,7 @@ class VindaPlugin(Star):
                     元宝 += value.get("元宝", 0)
                     result_text += f"区服: {key} 💰: {value.get('元宝',0)}\n"
 
-            result_text += f"总元宝: {元宝}"
+            result_text += f"合计💰: {元宝}"
             yield event.plain_result(result_text)
 
             # image_url = await self.text_to_image(result_text)
