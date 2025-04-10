@@ -169,10 +169,12 @@ class VindaPlugin(Star):
             for key, value in result.items():
                 if re.match(pattern, key):
                     元宝 += value.get("元宝", 0)
-                    result_text += f"区服: {key}, 💰: {value.get('元宝',0)}\n"
+                    result_text += f"区服: {key} 💰: {value.get('元宝',0)}\n"
 
             result_text += f"总元宝: {元宝}"
-            image_url = await self.text_to_image(result_text)
-            yield event.image_result(image_url)
+            yield event.plain_result(result_text)
+
+            # image_url = await self.text_to_image(result_text)
+            # yield event.image_result(image_url)
         except Exception as e:
             yield event.plain_result("获取失败")
