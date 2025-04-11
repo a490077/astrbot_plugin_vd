@@ -162,14 +162,14 @@ class VindaPlugin(Star):
         try:
             url = "https://api.pp052.top:88/get_rxjh"
             result = requests.get(url).json()
-            result_text = ""
+            result_text = f"当前进度: {result.get('当前区服','')}_{result.get('当前角色','')}\n"
 
             元宝 = 0
             pattern = r"\d+_[1-4]"
             for key, value in result.items():
                 if re.match(pattern, key):
                     元宝 += value.get("元宝", 0)
-                    result_text += f"区服: {key}\t💰: {value.get('元宝',0)}\n"
+                    result_text += f"区服: {key}	💰: {value.get('元宝',0)}\n"
 
             result_text += f"合计💰: {元宝}"
             yield event.plain_result(result_text)
