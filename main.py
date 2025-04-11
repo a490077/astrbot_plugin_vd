@@ -162,7 +162,7 @@ class VindaPlugin(Star):
         try:
             url = "https://api.pp052.top:88/get_rxjh"
             result = requests.get(url).json()
-            result_text = f"当前进度: {result.get('当前区服','')}_{result.get('当前角色','')}\n"
+            result_text = f"当前进度: {result.get('当前区号','')}_{result.get('当前人物','')}\n"
 
             元宝 = 0
             pattern = r"\d+_[1-4]"
