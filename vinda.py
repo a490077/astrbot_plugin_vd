@@ -118,6 +118,7 @@ class Vinda:
     # 创建二维码图片对象
     def create_qr_code(self, text):
         try:
+            logger.info(f"二维码数据: {text}")
             qr_code = QRCode(text)
             qr_code.png("qrcode.png", scale=10)
             return "qrcode.png"
