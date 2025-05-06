@@ -177,7 +177,7 @@ class VindaPlugin(Star):
             start = 0
             text_len = len(result_text)
 
-            max_chars = 1000
+            max_chars = 2000
             tolerance = 50
 
             while start < text_len:
@@ -191,12 +191,12 @@ class VindaPlugin(Star):
                     end = newline_pos + 1  # 包括换行符
                 else:
                     # 没有找到换行符，尝试找最近的空格
-                    space_pos = result_text.rfind(" ", start, search_end)
-                    if space_pos > start:
-                        end = space_pos + 1
-                    else:
-                        # 直接按最大长度切
-                        end = min(start + max_chars, text_len)
+                    # space_pos = result_text.rfind(" ", start, search_end)
+                    # if space_pos > start:
+                    #     end = space_pos + 1
+                    # else:
+                    # 直接按最大长度切
+                    end = min(start + max_chars, text_len)
 
                 yield event.plain_result(result_text[start:end])
                 start = end
