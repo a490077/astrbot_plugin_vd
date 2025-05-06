@@ -177,7 +177,7 @@ class VindaPlugin(Star):
             start = 0
             text_len = len(result_text)
 
-            max_chars = 1800  # 分段长度
+            max_chars = self.config.get("max_char", 1500)  # 分段长度
             tolerance = 50  # 容忍度
 
             while start < text_len:

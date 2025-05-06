@@ -16,5 +16,11 @@
         "type": "string",
         "hint": "fk接口地址",
         "obvious_hint": true
+    },
+    "max_char": {
+        "description": "max_char",
+        "type": "int",
+        "hint": "消息分页最大字符数",
+        "obvious_hint": true
     }
 }
