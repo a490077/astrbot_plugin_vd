@@ -177,8 +177,8 @@ class VindaPlugin(Star):
             start = 0
             text_len = len(result_text)
 
-            max_chars = 2000
-            tolerance = 50
+            max_chars = 1800  # 分段长度
+            tolerance = 50  # 容忍度
 
             while start < text_len:
                 # 搜索区间的终点
