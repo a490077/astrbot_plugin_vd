@@ -207,7 +207,7 @@ class Vinda:
                 and len(result["data"]) > 0
             ):
                 today_dishes = result["data"][0]
-                return f"今日菜单: {today_dishes['lunchMenuName']} <{today_dishes['lunchSoupName']}>"
+                return f"今日菜单:\n{today_dishes['lunchMenuName']}\n🥣{today_dishes['lunchSoupName']}"
             else:
                 logger.info(result)
                 raise Exception("请求失败或返回数据格式错误")
