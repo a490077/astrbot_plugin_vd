@@ -85,7 +85,7 @@ class VindaPlugin(Star):
             elif user_name.isdigit():
                 reply_message += f"\n@{user_name} {cmd(user_name)}"
             else:
-                reply_message += f"\n@{user_name} 你还不是VIP"
+                reply_message += f"\n@{user_name} 你还不是VIP 请输入 /sid 获取id联系管理员开通VIP"
         yield event.plain_result(reply_message)
 
     @filter.command("二维码")
@@ -103,7 +103,7 @@ class VindaPlugin(Star):
         if args_str in user_dict:
             args_str = user_dict.get(args_str)  # 参数转为工号
         elif not str(args_str).isdigit():
-            yield event.plain_result(f"@{args_str} 你还不是VIP")
+            yield event.plain_result(f"@{args_str} 你还不是VIP 请输入 /sid 获取id联系管理员开通VIP")
             return
         qr = self.vinda.get_qr_code_data(args_str)  # 返回二维码路径
         if qr:
