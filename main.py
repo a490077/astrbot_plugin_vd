@@ -94,6 +94,7 @@ class VindaPlugin(Star):
         logger.info("二维码...")
         sender_id = event.get_sender_id()
         sender_name = event.get_sender_name()
+        logger.info(f"sender_id: {sender_id}, sender_name: {sender_name}")
         if args_str:
             if not event.is_admin():
                 yield event.plain_result("没有权限!...")
