@@ -224,7 +224,7 @@ class Vinda:
     # 获取员工数据
     def 查询(self, name):
         url_parse = urllib.parse.quote(name)
-        url = f"{self.fk_url}/autocrud/bpm.ENGINE.bpm_engine_lov_sqltext_query/query?tag_id=140422&layout_id=108221"
+        url = f"{self.fk_url}/autocrud/bpm.ENGINE.bpm_engine_lov_sqltext_query/query?tag_id=361625&layout_id=146635"
         payload = f'_request_data={{"parameter":{{"name":"{url_parse}"}}}}'
         headers = {
             "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
