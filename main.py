@@ -168,6 +168,7 @@ class VindaPlugin(Star):
             }
             url = f"https://api.pp052.top:88/get_rxjh?id={dev_ids[dev_num]}"
             result = requests.get(url).json()
+            logger.info(f"result: {result}")
             result_text = f"当前进度: {result.get('当前区号','')}_{result.get('当前人物','')}\n"
 
             元宝 = 0
