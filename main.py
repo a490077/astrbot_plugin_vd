@@ -161,11 +161,16 @@ class VindaPlugin(Star):
     async def 元宝(self, event: AstrMessageEvent, dev_num: str = None):
         """元宝查询"""
         try:
-            #
+            dev_num = str(dev_num)
             dev_ids = {
                 "1": "861747776570592",  # 1号机
                 "2": "a0395843a5c2c5cab19c129242cc5a9f",  # 2号机
             }
+
+            if dev_num not in dev_ids:
+                yield event.plain_result("设备编号无效")
+                return
+
             url = f"https://api.pp052.top:88/get_rxjh?id={dev_ids[dev_num]}"
             result = requests.get(url).json()
 
