@@ -158,7 +158,7 @@ class VindaPlugin(Star):
         yield event.image_result("https://api.52vmy.cn/api/wl/moyu")
 
     @filter.command("元宝")
-    async def 元宝(self, event: AstrMessageEvent, dev_num: str = None):
+    async def 元宝(self, event: AstrMessageEvent, dev_num: str = "1"):
         """元宝查询"""
         try:
             dev_num = str(dev_num)
