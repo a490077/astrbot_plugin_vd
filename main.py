@@ -27,9 +27,9 @@ wx_id_dict = conf.get("wx_id_dict", {})
 user_dict = conf.get("user_dict", {})
 
 
-@register("vinda", "pp", "自用vinda助手", "1.0.0", "https://github.com/a490077/astrbot_plugin_vd")
+@register("vd", "pp", "自用vd助手", "1.0.0", "https://github.com/a490077/astrbot_plugin_vd")
 class VindaPlugin(Star):
-    """🤡vinda小助手🤡
+    """🤡vd小助手🤡
     🤡V50开通VIP🤡"""
 
     def __init__(self, context: Context, config: dict):
@@ -48,8 +48,15 @@ class VindaPlugin(Star):
     async def 稽查(self, event: AstrMessageEvent):
         """查询今日订餐情况"""
         logger.info("稽查...")
-        reply_message = self.vinda.稽查(user_dict)
-        yield event.plain_result(reply_message)
+        sender_id = event.get_sender_id()
+        sender_name = event.get_sender_name()
+        user_name = wx_id_dict.get(sender_id, sender_name)
+        if user_name in user_dict:
+            reply_message = self.vinda.稽查(user_dict)
+            yield event.plain_result(reply_message)
+        else:
+            reply_message = f"@{user_name} 你还不是VIP 请输入 /sid 获取id联系管理员开通VIP"
+            yield event.plain_result(reply_message)
 
     @filter.command("订餐")
     async def 订餐(self, event: AstrMessageEvent, args_str: str = None):
@@ -116,41 +123,15 @@ class VindaPlugin(Star):
     async def 查询(self, event: AstrMessageEvent, name: str = None):
         """根据名称查询员工信息"""
         logger.info("查询...")
-        reply_message = self.vinda.查询(name)
-        yield event.plain_result(reply_message)
-
-    @filter.llm_tool()
-    async def check_order_meals(self, event: AstrMessageEvent):
-        """无需参数, 返回各成员的订餐情况。
-        或者用户问到:谁是小丑?时也可以以此结果回复
-        """
-        async for result in self.稽查(event):
-            return result
-
-    @filter.llm_tool()
-    async def check_menu(self, event: AstrMessageEvent):
-        """无需参数, 返回饭堂的菜单
-        用户询问吃什么的时候可以以此结果回复
-        """
-        async for result in self.菜单(event):
-            yield result
-
-    @filter.event_message_type(filter.EventMessageType.ALL)
-    async def v_me_50(self, event: AstrMessageEvent):
-        """疯狂星期四V50"""
-        today = datetime.datetime.today()
-        today.isoweekday()
-        pattern = r"([Vv]我?50|疯狂星期四|今天星期四|[Kk][Ff][Cc]|星期几|肯德基)"
-        if today.isoweekday() == 4 and bool(re.search(pattern, event.message_str)):
-            url = "https://vme.im/api?format=text"
-            try:
-                response = requests.get(url)  # 设置超时防止长时间等待
-                response.raise_for_status()  # 检查 HTTP 响应状态码
-                result_text = response.text  # 直接获取文本
-            except requests.exceptions.RequestException as e:
-                result_text = f"获取信息失败: {e}"
-
-            yield event.plain_result(result_text)
+        sender_id = event.get_sender_id()
+        sender_name = event.get_sender_name()
+        user_name = wx_id_dict.get(sender_id, sender_name)
+        if user_name in user_dict:
+            reply_message = self.vinda.查询(name)
+            yield event.plain_result(reply_message)
+        else:
+            reply_message = f"@{user_name} 你还不是VIP 请输入 /sid 获取id联系管理员开通VIP"
+            yield event.plain_result(reply_message)
 
     @filter.command("摸鱼")
     async def 摸鱼(self, event: AstrMessageEvent):
@@ -160,6 +141,9 @@ class VindaPlugin(Star):
     @filter.command("元宝")
     async def 元宝(self, event: AstrMessageEvent, dev_num: str = "1"):
         """元宝查询"""
+        if not event.is_admin():
+            yield event.plain_result("没有权限!...")
+            return
         try:
             dev_num = str(dev_num)
             dev_ids = {
