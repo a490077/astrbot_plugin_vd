@@ -158,10 +158,15 @@ class VindaPlugin(Star):
         yield event.image_result("https://api.52vmy.cn/api/wl/moyu")
 
     @filter.command("元宝")
-    async def 元宝(self, event: AstrMessageEvent):
+    async def 元宝(self, event: AstrMessageEvent, dev_num: str = None):
         """元宝查询"""
         try:
-            url = "https://api.pp052.top:88/get_rxjh"
+            #
+            dev_ids = {
+                "1": "861747776570592",  # 1号机
+                "2": "a0395843a5c2c5cab19c129242cc5a9f",  # 2号机
+            }
+            url = f"https://api.pp052.top:88/get_rxjh?id={dev_ids[dev_num]}"
             result = requests.get(url).json()
             result_text = f"当前进度: {result.get('当前区号','')}_{result.get('当前人物','')}\n"
 
