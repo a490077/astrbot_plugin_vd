@@ -165,7 +165,7 @@ class VindaPlugin(Star):
             for key, value in result.items():
                 if re.match(pattern, key):
                     元宝 += value.get("元宝", 0)
-                    result_text += f"区服: {key}	💰: {value.get('元宝',0)} {'🏅' if value.get('侠名') else ''}\n"
+                    result_text += f"区服: {key}	💰: {value.get('元宝',0)}	{'🏅' if value.get('侠名') else ''}\n"
 
             result_text += f"合计💰: {元宝}"
             # yield event.plain_result(result_text)
