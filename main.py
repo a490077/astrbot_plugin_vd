@@ -138,12 +138,10 @@ class VindaPlugin(Star):
         """摸鱼日历"""
         yield event.image_result("https://api.52vmy.cn/api/wl/moyu")
 
+    @filter.permission_type(filter.PermissionType.ADMIN)
     @filter.command("元宝")
     async def 元宝(self, event: AstrMessageEvent, dev_num: str = "1"):
         """元宝查询"""
-        if not event.is_admin():
-            yield event.plain_result("没有权限!...")
-            return
         try:
             dev_num = str(dev_num)
             dev_ids = {
