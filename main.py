@@ -82,7 +82,7 @@ class VindaPlugin(Star):
                 return
         else:
             args_str = wx_id_dict.get(sender_id, sender_name)
-        separators = r"[,\s;|:#]+"  # 逗号、空格、分号、竖线、井号 作为分隔符
+        separators = r"[,\s;|:#&+]+"  # 逗号、空格、分号、竖线、井号 作为分隔符
         args_list = user_dict.keys() if args_str == "ALL" else re.split(separators, args_str)
         logger.info(f"执行命令: {cmd.__name__}, 参数: {args_list}")
         reply_message = "🤡🤡🤡"
