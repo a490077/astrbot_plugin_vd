@@ -6,7 +6,7 @@ from astrbot.core.star.filter.permission import PermissionType
 import re
 import requests
 import json
-import datetime
+import time
 from pathlib import Path
 
 
@@ -166,37 +166,39 @@ class VindaPlugin(Star):
                     result_text += f"区服: {key}\t💰: {value.get('元宝',0):<7}\t{'🏅' if value.get('侠名') else ''}\n"
 
             result_text += f"合计💰: {元宝}"
-            yield event.plain_result(result_text)
-
-            # start = 0
-            # text_len = len(result_text)
-
-            # max_chars = self.config.get("max_char", 1500)  # 分段长度
-            # tolerance = 50  # 容忍度
-
-            # while start < text_len:
-            #     # 搜索区间的终点
-            #     search_end = min(start + max_chars + tolerance, text_len)
-
-            #     # 尝试在范围内找到最近换行符
-            #     newline_pos = result_text.find("\n", start + max_chars, search_end)
-
-            #     if newline_pos != -1:
-            #         end = newline_pos + 1  # 包括换行符
-            #     else:
-            #         # 没有找到换行符，尝试找最近的空格
-            #         # space_pos = result_text.rfind(" ", start, search_end)
-            #         # if space_pos > start:
-            #         #     end = space_pos + 1
-            #         # else:
-            #         # 直接按最大长度切
-            #         end = min(start + max_chars, text_len)
-
-            #     yield event.plain_result(result_text[start:end])
-            #     start = end
+            # yield event.plain_result(result_text)
 
             # image_url = await self.text_to_image(result_text)
             # yield event.image_result(image_url)
+
+            start = 0
+            text_len = len(result_text)
+
+            max_chars = self.config.get("max_char", 1500)  # 分段长度
+            tolerance = 50  # 容忍度
+
+            while start < text_len:
+                # 搜索区间的终点
+                search_end = min(start + max_chars + tolerance, text_len)
+
+                # 尝试在范围内找到最近换行符
+                newline_pos = result_text.find("\n", start + max_chars, search_end)
+
+                if newline_pos != -1:
+                    end = newline_pos + 1  # 包括换行符
+                else:
+                    # 没有找到换行符，尝试找最近的空格
+                    # space_pos = result_text.rfind(" ", start, search_end)
+                    # if space_pos > start:
+                    #     end = space_pos + 1
+                    # else:
+                    # 直接按最大长度切
+                    end = min(start + max_chars, text_len)
+
+                yield event.plain_result(result_text[start:end])
+                start = end
+                time.sleep(2.2)
+
         except Exception as e:
             logger.error(e)
             yield event.plain_result("获取失败")
