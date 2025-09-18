@@ -237,5 +237,3 @@ class VindaPlugin(Star):
             if not reply_message:
                 reply_message = f"未找 { message_str } 到相关信息"
             yield event.plain_result(reply_message)
-        else:
-            logger.info(f"非 V码 消息: {message_str}")
