@@ -50,7 +50,7 @@ wx_id_dict = conf.get("wx_id_dict", {})
 user_dict = conf.get("user_dict", {})
 
 
-@register("vd", "pp", "自用vd助手", "1.0.0", "https://github.com/a490077/astrbot_plugin_vd")
+@register("vd", "pp", "自用vd助手", "1.0.1", "https://github.com/a490077/astrbot_plugin_vd")
 class VindaPlugin(Star):
     """🤡vd小助手🤡
     🤡V50开通VIP🤡"""
