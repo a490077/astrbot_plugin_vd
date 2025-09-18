@@ -10,8 +10,11 @@ import time
 import pandas as pd
 from pathlib import Path
 
-价格 = pd.read_csv("价格.csv").fillna("")
-价目表 = pd.read_csv("价目表.csv").fillna("")
+script_path = Path(__file__).parent  # pathlib 方法
+logger.info(f"当前文件目录: {script_path}")
+
+价格 = pd.read_csv(script_path / "价格.csv").fillna("")
+价目表 = pd.read_csv(script_path / "价目表.csv").fillna("")
 
 
 # 格式化输出
@@ -43,8 +46,6 @@ def load_config(file_path="config.json"):
         return {}
 
 
-script_path = Path(__file__).parent  # pathlib 方法
-logger.info(f"当前文件目录: {script_path}")
 conf = load_config(script_path / "config.json")
 wx_id_dict = conf.get("wx_id_dict", {})
 user_dict = conf.get("user_dict", {})
