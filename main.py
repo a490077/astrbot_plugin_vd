@@ -7,7 +7,30 @@ import re
 import requests
 import json
 import time
+import pandas as pd
 from pathlib import Path
+
+价格 = pd.read_csv("价格.csv").fillna("")
+价目表 = pd.read_csv("价目表.csv").fillna("")
+
+
+# 格式化输出
+def format_data(data: list):
+    results = []
+    for item in data:
+        formatted = "\n".join([f"[{k}]: {v}" for k, v in item.items()])
+        results.append(formatted)
+    return "\n-----------------\n".join(results)
+
+
+# 根据V码查询
+def vcode_lookup(vcode: str):
+    单品价格 = 价格[价格["V码"] == vcode]
+    单品资料 = 价目表[价目表["V码"] == vcode]
+    价格数据 = 单品价格.to_dict(orient="records")
+    资料数据 = 单品资料.to_dict(orient="records")
+    汇总 = 价格数据 + 资料数据
+    return format_data(汇总)
 
 
 # 读取 JSON 配置文件
@@ -202,3 +225,14 @@ class VindaPlugin(Star):
         except Exception as e:
             logger.error(e)
             yield event.plain_result("获取失败")
+
+    @filter.event_message_type(filter.EventMessageType.ALL)
+    async def on_private_message(self, event: AstrMessageEvent):
+        message_str = event.message_str
+        message_str = message_str.strip().upper()
+        pattern = re.compile(r"^[VATD]\d{4}(-?[A-Z])?$")
+        if pattern.match(message_str):  # V码格式验证
+            reply_message = vcode_lookup(message_str)
+            if not reply_message:
+                reply_message = f"未找 { message_str } 到相关信息"
+            yield event.plain_result(reply_message)
