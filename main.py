@@ -242,7 +242,7 @@ class VindaPlugin(Star):
             if not reply_message:
                 reply_message = f"未找到 { message_str } 相关信息"
             yield event.plain_result(reply_message)
-            yield event.image_result(f"{self.config.cookie_url.replace("api", "config", 1)}/image/vinda/{message_str}.png")
+            yield event.image_result(f'{self.config.cookie_url.replace("api", "config", 1)}/image/vinda/{message_str}.png')
 
 
 @dataclass
