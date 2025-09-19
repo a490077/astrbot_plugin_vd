@@ -232,14 +232,15 @@ class VindaPlugin(Star):
             yield event.plain_result("获取失败")
 
     @filter.event_message_type(filter.EventMessageType.ALL)
-    async def on_private_message(self, event: AstrMessageEvent):
+    async def 产品查询(self, event: AstrMessageEvent):
+        """监测到V码, 自动回复产品资料"""
         message_str = event.message_str
         message_str = message_str.strip().upper()
         pattern = re.compile(r"^[VATD]\d{4}(-?[A-Z])?$")
         if pattern.match(message_str):  # V码格式验证
             reply_message = vcode_lookup(message_str)
             if not reply_message:
-                reply_message = f"未找 { message_str } 到相关信息"
+                reply_message = f"未找到 { message_str } 相关信息"
             yield event.plain_result(reply_message)
 
 
