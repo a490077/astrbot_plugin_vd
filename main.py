@@ -10,6 +10,10 @@ import time
 import pandas as pd
 from pathlib import Path
 
+
+from astrbot.api import ToolSet, FunctionTool
+from dataclasses import dataclass, field
+
 script_path = Path(__file__).parent  # pathlib 方法
 logger.info(f"当前文件目录: {script_path}")
 
@@ -237,3 +241,28 @@ class VindaPlugin(Star):
             if not reply_message:
                 reply_message = f"未找 { message_str } 到相关信息"
             yield event.plain_result(reply_message)
+
+
+@dataclass
+class VTools(FunctionTool):
+    name: str = "get_vcode_info"  # tool 的名称
+    description: str = "根据产品V码获取产品详细信息,包含条码,规格,渠道等等"  # tool 的描述
+    parameters: dict = field(
+        default_factory=lambda: {
+            "type": "object",
+            "properties": {
+                "vcode": {"type": "string", "description": "产品的V码,例如 V1234-A, 满足正则表达式:[VATD]\d{4}(-?[A-Z])?"}
+            },
+            "required": ["vcode"],
+        }
+    )  # tool 的参数定义
+
+    async def run(self, vcode: str):
+        vcode = vcode.strip().upper()
+        pattern = re.compile(r"^[VATD]\d{4}(-?[A-Z])?$")
+        if pattern.match(vcode):  # V码格式验证
+            return vcode_lookup(vcode)
+
+
+tool = VTools()
+tool_set = ToolSet([tool])
