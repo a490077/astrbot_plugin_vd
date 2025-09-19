@@ -238,11 +238,23 @@ class VindaPlugin(Star):
         message_str = message_str.strip().upper()
         pattern = re.compile(r"^[VATD]\d{4}(-?[A-Z])?$")
         if pattern.match(message_str):  # V码格式验证
+            # 先获取产品资料
             reply_message = vcode_lookup(message_str)
             if not reply_message:
                 reply_message = f"未找到 { message_str } 相关信息"
             yield event.plain_result(reply_message)
-            yield event.image_result(f'{self.config.cookie_url.replace("api", "config", 1)}/image/vinda/{message_str}.png')
+            # 尝试获取图片
+            img_url = f'{self.config.cookie_url.replace("api", "config", 1)}/image/vinda/{message_str}.png'
+            try:
+                response = requests.head(img_url, timeout=5)
+                if response.status_code == 200:
+                    yield event.image_result(img_url)
+                else:
+                    img_message = f"未找到 { message_str } 相关图片"
+                    yield event.plain_result(img_message)
+            except requests.RequestException:
+                img_message = "图片获取失败，可能图片不存在或网络问题"
+                yield event.plain_result(img_message)
 
 
 @dataclass
@@ -268,4 +280,3 @@ class VTools(FunctionTool):
 
 tool = VTools()
 tool_set = ToolSet([tool])
-logger.info("VD工具加载完成")
