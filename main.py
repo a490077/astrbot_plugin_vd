@@ -251,32 +251,30 @@ class VindaPlugin(Star):
                     yield event.image_result(img_url)
                 else:
                     img_message = f"未找到 { message_str } 相关图片"
-                    yield event.plain_result(img_message)
+                    logger.info(img_message)
             except requests.RequestException:
                 img_message = "图片获取失败，可能图片不存在或网络问题"
-                yield event.plain_result(img_message)
+                logger.info(img_message)
 
+    @dataclass
+    class VTools(FunctionTool):
+        name: str = "get_vcode_info"  # tool 的名称
+        description: str = "根据产品V码获取产品详细信息,包含产品的条码,规格,渠道等等"  # tool 的描述
+        parameters: dict = field(
+            default_factory=lambda: {
+                "type": "object",
+                "properties": {
+                    "vcode": {"type": "string", "description": "产品的V码,例如 V1234-A, 满足正则表达式:[VATD]\d{4}(-?[A-Z])?"}
+                },
+                "required": ["vcode"],
+            }
+        )  # tool 的参数定义
 
-@dataclass
-class VTools(FunctionTool):
-    name: str = "get_vcode_info"  # tool 的名称
-    description: str = "根据产品V码获取产品详细信息,包含产品的条码,规格,渠道等等"  # tool 的描述
-    parameters: dict = field(
-        default_factory=lambda: {
-            "type": "object",
-            "properties": {
-                "vcode": {"type": "string", "description": "产品的V码,例如 V1234-A, 满足正则表达式:[VATD]\d{4}(-?[A-Z])?"}
-            },
-            "required": ["vcode"],
-        }
-    )  # tool 的参数定义
+        async def run(self, vcode: str):
+            vcode = vcode.strip().upper()
+            pattern = re.compile(r"^[VATD]\d{4}(-?[A-Z])?$")
+            if pattern.match(vcode):  # V码格式验证
+                return vcode_lookup(vcode)
 
-    async def run(self, vcode: str):
-        vcode = vcode.strip().upper()
-        pattern = re.compile(r"^[VATD]\d{4}(-?[A-Z])?$")
-        if pattern.match(vcode):  # V码格式验证
-            return vcode_lookup(vcode)
-
-
-tool = VTools()
-tool_set = ToolSet([tool])
+    tool = VTools()
+    tool_set = ToolSet([tool])
