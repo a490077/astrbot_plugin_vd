@@ -43,7 +43,9 @@ def vcode_lookup(vcode: str):
 def 查单品(query: str):
     keywords = query.split("+")  # 拆分条件
     mask = 价目表["产品名称"].apply(lambda x: all(k.upper() in x.upper() for k in keywords))
-    result = 价目表[mask].to_dict(orient="records")
+    result = 价目表[mask]
+    result = result.drop_duplicates(subset="V码")
+    result = result.to_dict(orient="records")
     results = []
     for item in result:
         formatted = "\n".join([f'[{item["V码"]}]: {item["产品名称"]}'])
