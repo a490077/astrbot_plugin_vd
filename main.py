@@ -39,15 +39,17 @@ def vcode_lookup(vcode: str):
     汇总 = 价格数据 + 资料数据
     return format_data(汇总)
 
+
 def 查单品(query: str):
     keywords = query.split("+")  # 拆分条件
     mask = 价目表["产品名称"].apply(lambda x: all(k.upper() in x.upper() for k in keywords))
     result = 价目表[mask].to_dict(orient="records")
     results = []
     for item in result:
-        formatted = "\n".join([f"[{item["V码"]}]: {item["产品名称"]}"])
+        formatted = "\n".join([f'[{item["V码"]}]: {item["产品名称"]}'])
         results.append(formatted)
     return "\n".join(results)
+
 
 # 读取 JSON 配置文件
 def load_config(file_path="config.json"):
@@ -264,16 +266,16 @@ class VindaPlugin(Star):
             except requests.RequestException:
                 img_message = "图片获取失败，可能图片不存在或网络问题"
                 logger.info(img_message)
-                
-                
-    @filter.command("单品")       
-    async def 单品(self,  event: AstrMessageEvent, query: str = None):
+
+    @filter.command("单品")
+    async def 单品(self, event: AstrMessageEvent, query: str = None):
         """根据产品名称查询产品V码"""
         message_str = 查单品(query)
         if not message_str:
             message_str = f"未找到 { query } 相关信息"
         yield event.plain_result(message_str)
-        
+
+
 @dataclass
 class VTools(FunctionTool):
     name: str = "get_vcode_info"  # tool 的名称
