@@ -44,13 +44,20 @@ def 查单品(query: str):
     keywords = query.split("+")  # 拆分条件
     mask = 价目表["产品名称"].apply(lambda x: all(k.upper() in x.upper() for k in keywords))
     result = 价目表[mask]
-    result = result.drop_duplicates(subset="V码")
+    result = result.drop_duplicates(subset="V码")  # 根据V码去重
     result = result.to_dict(orient="records")
     results = []
     for item in result:
         formatted = "\n".join([f'[{item["V码"]}]: {item["产品名称"]}'])
         results.append(formatted)
     return "\n".join(results)
+
+
+def 查条码(code_69: str):
+    mask = 价目表["条码"].str.contains(code_69, na=False)
+    单品资料 = 价目表[mask]
+    单品资料.to_dict(orient="records")
+    return format_data(单品资料)
 
 
 # 读取 JSON 配置文件
@@ -246,30 +253,43 @@ class VindaPlugin(Star):
 
     @filter.event_message_type(filter.EventMessageType.ALL)
     async def 产品查询(self, event: AstrMessageEvent):
-        """监测到V码, 自动回复产品资料"""
+        """监测到V码或条码, 自动回复产品资料"""
         message_str = event.message_str
         message_str = message_str.strip().upper()
         pattern = re.compile(r"^[VATD]\d{4}(-?[A-Z])?$")
+        pattern_code69 = re.compile(r"^\d{13}$")
+        reply_message = ""
+        vcode = ""
         if pattern.match(message_str):  # V码格式验证
-            # 先获取产品资料
             reply_message = vcode_lookup(message_str)
-            if not reply_message:
-                reply_message = f"未找到 { message_str } 相关信息"
-            yield event.plain_result(reply_message)
-            # 尝试获取图片
-            img_url = f'{self.config.cookie_url.replace("api", "config", 1)}/image/vinda/{message_str}.png'
-            try:
-                response = requests.head(img_url, timeout=5)
-                if response.status_code == 200:
-                    yield event.image_result(img_url)
-                else:
-                    img_message = f"未找到 { message_str } 相关图片"
-                    logger.info(img_message)
-            except requests.RequestException:
-                img_message = "图片获取失败，可能图片不存在或网络问题"
-                logger.info(img_message)
+            vcode = message_str
+        elif pattern_code69.match(message_str):  # 69码格式验证
+            reply_message = 查条码(message_str)
+            pattern_vcode = r"[VATD]\d{4}(-?[A-Z])?"
+            match = re.search(pattern_vcode, reply_message)
+            if match:
+                vcode = match.group(0)
 
-    @filter.command("单品")
+        if not reply_message:
+            reply_message = f"未找到 { message_str } 相关信息"
+        yield event.plain_result(reply_message)
+
+        # 尝试获取图片
+        if not vcode:
+            return
+        img_url = f'{self.config.cookie_url.replace("api", "config", 1)}/image/vinda/{message_str}.png'
+        try:
+            response = requests.head(img_url, timeout=5)
+            if response.status_code == 200:
+                yield event.image_result(img_url)
+            else:
+                img_message = f"未找到 { message_str } 相关图片"
+                logger.info(img_message)
+        except requests.RequestException:
+            img_message = "图片获取失败，可能图片不存在或网络问题"
+            logger.info(img_message)
+
+    @filter.command("查找")
     async def 单品(self, event: AstrMessageEvent, query: str = None):
         """根据产品名称查询产品V码"""
         message_str = 查单品(query)
