@@ -269,6 +269,8 @@ class VindaPlugin(Star):
             match = re.search(pattern_vcode, reply_message)
             if match:
                 vcode = match.group(0)
+        else:
+            return
 
         if not reply_message:
             reply_message = f"未找到 { message_str } 相关信息"
