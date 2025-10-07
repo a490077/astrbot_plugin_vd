@@ -13,7 +13,7 @@ from .wechatpadpromax_client import WechatPadProMaxClient
 
 # 注册平台适配器。第一个参数为平台名，第二个为描述。第三个为默认配置。
 @register_platform_adapter(
-    "wechat_pp", "wechat pp 自定义适配器", default_config_tmpl={"authcode": "your_authcode", "port": "6196"}
+    "wechat_pp", "wechat pp 自定义适配器", default_config_tmpl={"authcode": "your_authcode", "port": "6196", "host": "0.0.0.0"}
 )
 class WechatPadProMaxPlatformAdapter(Platform):
     def __init__(self, platform_config: dict, platform_settings: dict, event_queue: asyncio.Queue) -> None:
