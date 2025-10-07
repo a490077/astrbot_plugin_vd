@@ -5,7 +5,11 @@ from astrbot import logger
 
 
 class WechatPadProMaxWebhook:
-    def __init__(self, config: dict, event_queue: asyncio.Queue = None):
+    def __init__(
+        self,
+        config: dict,
+        event_handler=None,
+    ):
         self.enabled = config.get("enabled", True)
         self.secret = config.get("secret", "your-signature-secret")
         self.include_self = config.get("includeSelfMessage", True)
@@ -14,10 +18,12 @@ class WechatPadProMaxWebhook:
         self.dedupe_max = config.get("dedupeMax", 5000)
 
         self._seen = set()
-        self.event_queue = event_queue or asyncio.Queue()
+        self.event_handler = event_handler
 
         self.host = config.get("host", "0.0.0.0")
         self.port = config.get("port", 6196)
+        self.health_path = config.get("healthPath", "/wppm/health")
+        self.webhook_path = config.get("webhookPath", "/wppm/webhook")
 
         self.server = quart.Quart(__name__)
         self.server.add_url_rule("/wppm/health", view_func=self.health, methods=["GET"])
@@ -82,15 +88,16 @@ class WechatPadProMaxWebhook:
                 skipped += 1
             else:
                 processed += 1
-                # 把事件丢进队列
                 # await self.event_queue.put(m)
                 logger.info(f"已处理消息事件: {m.get('msgId','')}")
+                # 处理事件
+                await self.event_handler(body)
 
         return {"ok": True, "processedCount": processed, "skippedCount": skipped}
 
     async def start(self):
         """启动 Webhook 服务器"""
-        logger.info(f"WechatPadProMax 适配器启动: http://{self.host}:{self.port}/wppm/webhook")
+        logger.info(f"WechatPadProMax 适配器启动: http://{self.host}:{self.port}{self.webhook_path}")
         await self.server.run_task(
             host=self.host,
             port=self.port,

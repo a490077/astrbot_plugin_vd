@@ -2,7 +2,7 @@ from astrbot.core.utils.io import file_to_base64, download_image_by_url
 from astrbot.api.event import AstrMessageEvent, MessageChain
 from astrbot.api.platform import AstrBotMessage, PlatformMetadata
 from astrbot.api.message_components import Plain, Image, Record
-from .wechatpadpromax_client import WechatPadProMaxClient
+from .wechatpadpromax_webhook_server import WechatPadProMaxWebhook
 
 
 class WechatPadProMaxMessageEvent(AstrMessageEvent):
@@ -12,7 +12,7 @@ class WechatPadProMaxMessageEvent(AstrMessageEvent):
         message_obj: AstrBotMessage,
         platform_meta: PlatformMetadata,
         session_id: str,
-        client: WechatPadProMaxClient,
+        client: WechatPadProMaxWebhook,
     ):
         super().__init__(message_str, message_obj, platform_meta, session_id)
         self.client = client
