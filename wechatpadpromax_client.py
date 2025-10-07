@@ -5,9 +5,8 @@ from astrbot import logger
 class WechatPadProMaxClient:
     """模拟一个消息平台，这里 5 秒钟下发一个消息"""
 
-    def __init__(self, token: str, username: str):
+    def __init__(self, token: str):
         self.token = token
-        self.username = username
         # ...
 
     async def start_polling(self):
