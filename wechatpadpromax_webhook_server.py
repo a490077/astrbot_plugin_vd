@@ -20,8 +20,8 @@ class WechatPadProMaxWebhook:
         self.port = config.get("port", 6196)
 
         self.server = quart.Quart(__name__)
-        self.server.add_url_rule("/health", view_func=self.health, methods=["GET"])
-        self.server.add_url_rule("/webhook", view_func=self.webhook, methods=["POST"])
+        self.server.add_url_rule("/wppm/health", view_func=self.health, methods=["GET"])
+        self.server.add_url_rule("/wppm/webhook", view_func=self.webhook, methods=["POST"])
         self.shutdown_event = asyncio.Event()
 
     def mark_or_seen(self, key: str) -> bool:
@@ -46,6 +46,7 @@ class WechatPadProMaxWebhook:
         return hmac.compare_digest(expect, got)
 
     async def health(self):
+        """健康检查端点"""
         return {"status": "ok", "enabled": self.enabled}
 
     async def webhook(self):
@@ -82,19 +83,24 @@ class WechatPadProMaxWebhook:
             else:
                 processed += 1
                 # 把事件丢进队列
-                await self.event_queue.put(m)
+                # await self.event_queue.put(m)
+                logger.info(f"已处理消息事件: {m.get('msgId','')}")
 
         return {"ok": True, "processedCount": processed, "skippedCount": skipped}
 
     async def start(self):
+        """启动 Webhook 服务器"""
         logger.info(f"Webhook 适配器启动: http://{self.host}:{self.port}/webhook")
         await self.server.run_task(
             host=self.host,
             port=self.port,
-            shutdown_trigger=self.stop,
+            shutdown_trigger=self.shutdown_trigger,
         )
 
-    async def stop(self):
-        """触发关闭"""
+    async def shutdown_trigger(self):
         await self.shutdown_event.wait()
-        logger.info("Webhook 适配器已关闭")
+
+    async def stop(self):
+        """停止 Webhook 服务器"""
+        self.shutdown_event.set()
+        logger.info("WechatPadProMax Webhook 服务器已停止")
