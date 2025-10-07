@@ -33,5 +33,4 @@ class WechatPadProMaxPlatformAdapter(Platform):
     async def run(self):
         # 必须实现，这里是主要逻辑。
         self.webhook_helper = WechatPadProMaxWebhook(self.config, self._event_queue)
-        await self.webhook_helper.initialize()
-        await self.webhook_helper.start_polling()
+        await self.webhook_helper.start()
