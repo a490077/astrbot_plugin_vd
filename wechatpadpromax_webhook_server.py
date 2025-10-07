@@ -1,6 +1,7 @@
 import asyncio
 import quart
 import hmac, hashlib, time
+from astrbot import logger
 
 
 class WechatPadProMaxWebhook:
@@ -64,11 +65,13 @@ class WechatPadProMaxWebhook:
             return {"ok": True, "skipped": "self message"}
 
         if self.secret and not self.verify_signature(body):
+            logger.warning("签名校验失败")
             return quart.abort(401, "Signature verify failed")
 
         ts = int(body.get("Timestamp", 0))
         now = int(time.time())
         if abs(now - ts) > self.timestamp_skew:
+            logger.warning("已忽略旧消息")
             return {"ok": False, "warning": "timestamp skew too large"}
 
         processed, skipped = 0, 0
@@ -84,13 +87,14 @@ class WechatPadProMaxWebhook:
         return {"ok": True, "processedCount": processed, "skippedCount": skipped}
 
     async def start(self):
-        print(f"Webhook 适配器启动: http://{self.host}:{self.port}/webhook")
+        logger.info(f"Webhook 适配器启动: http://{self.host}:{self.port}/webhook")
         await self.server.run_task(
             host=self.host,
             port=self.port,
-            shutdown_trigger=self.shutdown_event.wait,
+            shutdown_trigger=self.stop,
         )
 
-    def stop(self):
+    async def stop(self):
         """触发关闭"""
-        self.shutdown_event.set()
+        await self.shutdown_event.wait()
+        logger.info("Webhook 适配器已关闭")
