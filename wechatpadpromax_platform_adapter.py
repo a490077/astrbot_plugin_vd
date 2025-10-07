@@ -17,6 +17,8 @@ class WechatPadProMaxPlatformAdapter(Platform):
         super().__init__(event_queue)
         self.config = platform_config  # 上面的默认配置，用户填写后会传到这里
         self.settings = platform_settings  # platform_settings 平台设置。
+        logger.info(f"WechatPadProMaxPlatformAdapter initialized with config: {self.config}")
+        logger.info(f"WechatPadProMaxPlatformAdapter initialized with settings: {self.settings}")
 
     async def send_by_session(self, session: MessageSesion, message_chain: MessageChain):
         # 必须实现

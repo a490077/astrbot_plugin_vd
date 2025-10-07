@@ -1,7 +1,6 @@
 import asyncio
 import quart
 import hmac, hashlib, time
-from typing import Dict, Any
 
 
 class WechatPadProMaxWebhook:
@@ -17,7 +16,7 @@ class WechatPadProMaxWebhook:
         self.event_queue = event_queue or asyncio.Queue()
 
         self.host = config.get("host", "0.0.0.0")
-        self.port = config.get("port", 8000)
+        self.port = config.get("port", 6196)
 
         self.server = quart.Quart(__name__)
         self.server.add_url_rule("/health", view_func=self.health, methods=["GET"])
