@@ -37,8 +37,8 @@ class WechatPadProMaxPlatformAdapter(Platform):
 
     async def run(self):
         # 必须实现，这里是主要逻辑。
-        self.webhook_helper = WechatPadProMaxWebhook(self.config, self._event_queue)
-        await self.webhook_helper.start()
+        # self.webhook_helper = WechatPadProMaxWebhook(self.config, self._event_queue)
+        # await self.webhook_helper.start()
 
         # FakeClient 是我们自己定义的，这里只是示例。这个是其回调函数
         async def on_received(data):
@@ -49,6 +49,7 @@ class WechatPadProMaxPlatformAdapter(Platform):
         # 初始化 FakeClient
         self.client = WechatPadProMaxClient(self.config.get("authcode"))
         self.client.on_message_received = on_received
+        logger.info("WechatPadProMax 客户端已初始化，开始监听消息...")
         await self.client.start_polling()  # 持续监听消息，这是个堵塞方法。
 
     async def convert_message(self, data: dict) -> AstrBotMessage:
