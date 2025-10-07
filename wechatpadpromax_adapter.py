@@ -40,7 +40,35 @@ class WechatPadProMaxPlatformAdapter(Platform):
         self.webhook_helper = WechatPadProMaxWebhook(self.config, self._event_queue)
         await self.webhook_helper.start()
 
+        # FakeClient 是我们自己定义的，这里只是示例。这个是其回调函数
+        async def on_received(data):
+            logger.info(data)
+            abm = await self.convert_message(data=data)  # 转换成 AstrBotMessage
+            await self.handle_msg(abm)
+
+        # 初始化 FakeClient
+        self.client = WechatPadProMaxClient(self.config.get("authcode"))
+        self.client.on_message_received = on_received
+        await self.client.start_polling()  # 持续监听消息，这是个堵塞方法。
+
+    async def convert_message(self, data: dict) -> AstrBotMessage:
+        # 将平台消息转换成 AstrBotMessage
+        # 这里就体现了适配程度，不同平台的消息结构不一样，这里需要根据实际情况进行转换。
+        abm = AstrBotMessage()
+        abm.type = MessageType.GROUP_MESSAGE  # 还有 friend_message，对应私聊。具体平台具体分析。重要！
+        abm.group_id = data["group_id"]  # 如果是私聊，这里可以不填
+        abm.message_str = data["content"]  # 纯文本消息。重要！
+        abm.sender = MessageMember(user_id=data["userid"], nickname=data["username"])  # 发送者。重要！
+        abm.message = [Plain(text=data["content"])]  # 消息链。如果有其他类型的消息，直接 append 即可。重要！
+        abm.raw_message = data  # 原始消息。
+        abm.self_id = data["bot_id"]
+        abm.session_id = data["userid"]  # 会话 ID。重要！
+        abm.message_id = data["message_id"]  # 消息 ID。
+
+        return abm
+
     async def handle_msg(self, message: AstrBotMessage):
+        # 处理消息
         message_event = WechatPadProMaxMessageEvent(
             message_str=message.message_str,
             message_obj=message,
@@ -48,4 +76,4 @@ class WechatPadProMaxPlatformAdapter(Platform):
             session_id=message.session_id,
             client=self.client,
         )
-        self.commit_event(message_event)
+        self.commit_event(message_event)  # 提交事件到事件队列。不要忘记！
