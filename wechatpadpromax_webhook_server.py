@@ -73,9 +73,9 @@ class WechatPadProMaxWebhook:
         if not self.include_self and body.get("IsSelf") is True:
             return {"ok": True, "skipped": "self message"}
 
-        if self.secret and not self.verify_signature(body):
-            logger.warning("签名校验失败")
-            return quart.abort(401, "Signature verify failed")
+        # if self.secret and not self.verify_signature(body):
+        #     logger.warning("签名校验失败")
+        #     return quart.abort(401, "Signature verify failed")
 
         ts = int(body.get("Timestamp", 0))
         now = int(time.time())
