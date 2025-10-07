@@ -82,7 +82,7 @@ class VindaPlugin(Star):
 
     def __init__(self, context: Context, config: dict):
         super().__init__(context)
-        from .wechatpadpromax_platform_adapter import FakePlatformAdapter  # noqa
+        from .wechatpadpromax_platform_adapter import WechatPadProMaxPlatformAdapter
 
         self.config = config
         self.vinda = Vinda(self.config)
