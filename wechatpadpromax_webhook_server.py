@@ -90,7 +90,7 @@ class WechatPadProMaxWebhook:
 
     async def start(self):
         """启动 Webhook 服务器"""
-        logger.info(f"Webhook 适配器启动: http://{self.host}:{self.port}/webhook")
+        logger.info(f"WechatPadProMax 适配器启动: http://{self.host}:{self.port}/wppm/webhook")
         await self.server.run_task(
             host=self.host,
             port=self.port,

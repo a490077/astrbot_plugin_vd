@@ -3,11 +3,29 @@ from astrbot import logger
 
 
 class WechatPadProMaxClient:
-    def __init__(self, token: str):
+    """模拟一个消息平台，这里 5 秒钟下发一个消息"""
+
+    def __init__(self, token: str, username: str):
         self.token = token
+        self.username = username
+        # ...
+
+    async def start_polling(self):
+        while True:
+            await asyncio.sleep(5)
+            await getattr(self, "on_message_received")(
+                {
+                    "bot_id": "123",
+                    "content": "新消息",
+                    "username": "zhangsan",
+                    "userid": "123",
+                    "message_id": "asdhoashd",
+                    "group_id": "group123",
+                }
+            )
 
     async def send_text(self, to: str, message: str):
-        logger.info("模拟发送消息:", to, message)
+        logger.info("发了消息:", to, message)
 
     async def send_image(self, to: str, image_path: str):
-        logger.info("模拟发送图片:", to, image_path)
+        logger.info("发了消息:", to, image_path)
