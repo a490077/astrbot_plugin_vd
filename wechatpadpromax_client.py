@@ -12,6 +12,7 @@ class WechatPadProMaxClient:
     async def start_polling(self):
         while True:
             await asyncio.sleep(5)
+            logger.info("模拟收到一条新消息")
             await getattr(self, "on_message_received")(
                 {
                     "bot_id": "123",
