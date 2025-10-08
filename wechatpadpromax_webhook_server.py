@@ -119,8 +119,8 @@ class WechatPadProMaxWebhook:
 
     async def send_text(self, to: str, message: str):
         """发送文本消息"""
-        logger.info("发了消息:", to, message)
+        logger.info(f"to:{to} message:{message}")
 
     async def send_image(self, to: str, image_path: str):
         """发送图片消息"""
-        logger.info("发了消息:", to, image_path)
+        logger.info(f"to:{to} image:{image_path}")
