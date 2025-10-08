@@ -53,10 +53,13 @@ class WechatPadProMaxPlatformAdapter(Platform):
         abm.type = MessageType.FRIEND_MESSAGE  # 还有 friend_message，对应私聊。具体平台具体分析。重要！
         # abm.group_id = data["group_id"]  # 如果是私聊，这里可以不填
         abm.message_str = data.get("text", "")  # 纯文本消息。重要！
+        logger.info(f"转换消息...1")
         abm.sender = MessageMember(user_id=data.get("fromUser", ""), nickname=data.get("fromNick", ""))  # 发送者。重要！
         abm.message = [Plain(text=data.get("text", ""))]  # 消息链。如果有其他类型的消息，直接 append 即可。重要！
+        logger.info(f"转换消息...2")
         abm.raw_message = data.get("rawContent", "")  # 原始消息。
         abm.self_id = data.get("toUser", "")  # 机器人自己的 ID。重要！
+        logger.info(f"转换消息...3")
         abm.session_id = data.get("fromUser", "")  # 会话 ID。重要！
         abm.message_id = data.get("newMsgId", "")  # 消息 ID。
         return abm
@@ -77,7 +80,7 @@ class WechatPadProMaxPlatformAdapter(Platform):
     async def _handle_webhook_event(self, event_data: dict):
         """处理 Webhook 事件"""
         logger.info(f"转换消息...")
-        abm = await self.convert_message(event_data.get("Data", {}).get("messages", {}))
+        abm = await self.convert_message(event_data)
         logger.info(f"转换消息完成...")
         if abm:
             logger.info(f"转换后abm消息: {abm}")

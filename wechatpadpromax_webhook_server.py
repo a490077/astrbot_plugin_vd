@@ -90,12 +90,11 @@ class WechatPadProMaxWebhook:
             if self.mark_or_seen(key):
                 skipped += 1
             else:
-                processed += 1
-                # await self.event_queue.put(m)
-                logger.info(f"已处理消息事件: {m.get('msgId','')}")
-                # 处理事件
+                # 处理消息
                 try:
-                    await self.event_handler(body)
+                    await self.event_handler(m)
+                    logger.info(f"已处理消息Id: {m.get('msgId','')}")
+                    processed += 1
                 except Exception:
                     return {"ok": False, "warning": "提交消息处理事件时报错"}
 
