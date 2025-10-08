@@ -75,7 +75,7 @@ class WechatPadProMaxPlatformAdapter(Platform):
 
     async def _handle_webhook_event(self, event_data: dict):
         """处理 Webhook 事件"""
-        logger.info(f"收到 Webhook 事件: {event_data}")
         abm = await self.convert_message(event_data.get("Data", {}).get("messages", {}))
         if abm:
+            logger.info(f"处理后abm消息: {abm}")
             await self.handle_msg(abm)
