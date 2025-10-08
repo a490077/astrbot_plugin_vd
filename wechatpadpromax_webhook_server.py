@@ -116,3 +116,11 @@ class WechatPadProMaxWebhook:
         """停止 Webhook 服务器"""
         self.shutdown_event.set()
         logger.info("WechatPadProMax Webhook 服务器已停止")
+
+    async def send_text(self, to: str, message: str):
+        """发送文本消息"""
+        logger.info("发了消息:", to, message)
+
+    async def send_image(self, to: str, image_path: str):
+        """发送图片消息"""
+        logger.info("发了消息:", to, image_path)
