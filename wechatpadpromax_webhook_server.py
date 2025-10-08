@@ -2,13 +2,14 @@ import asyncio
 import quart
 import hmac, hashlib, time
 from astrbot import logger
+from typing import Callable, Optional
 
 
 class WechatPadProMaxWebhook:
     def __init__(
         self,
         config: dict,
-        event_handler=None,
+        event_handler: Optional[Callable] = None,
     ):
         self.enabled = config.get("enabled", True)
         self.secret = config.get("secret", "your-signature-secret")

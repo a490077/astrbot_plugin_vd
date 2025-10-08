@@ -3,6 +3,7 @@ from astrbot.api.event import AstrMessageEvent, MessageChain
 from astrbot.api.platform import AstrBotMessage, PlatformMetadata
 from astrbot.api.message_components import Plain, Image, Record
 from .wechatpadpromax_webhook_server import WechatPadProMaxWebhook
+from astrbot import logger
 
 
 class WechatPadProMaxMessageEvent(AstrMessageEvent):
@@ -18,6 +19,7 @@ class WechatPadProMaxMessageEvent(AstrMessageEvent):
         self.client = client
 
     async def send(self, message: MessageChain):
+        logger.info(f"WechatPadProMax 发送消息: {message}")
         for i in message.chain:  # 遍历消息链
             if isinstance(i, Plain):  # 如果是文字类型的
                 await self.client.send_text(to=self.get_sender_id(), message=i.text)

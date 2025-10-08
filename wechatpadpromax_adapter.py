@@ -64,6 +64,7 @@ class WechatPadProMaxPlatformAdapter(Platform):
 
     async def handle_msg(self, message: AstrBotMessage):
         # 处理消息
+        logger.info(f"处理消息...")
         message_event = WechatPadProMaxMessageEvent(
             message_str=message.message_str,
             message_obj=message,
@@ -71,11 +72,14 @@ class WechatPadProMaxPlatformAdapter(Platform):
             session_id=message.session_id,
             client=self.webhook_helper,  # 传入客户端实例
         )
+        logger.info(f"提交事件...")
         self.commit_event(message_event)  # 提交事件到事件队列。不要忘记！
 
     async def _handle_webhook_event(self, event_data: dict):
         """处理 Webhook 事件"""
+        logger.info(f"转换消息...")
         abm = await self.convert_message(event_data.get("Data", {}).get("messages", {}))
+        logger.info(f"转换消息完成...")
         if abm:
-            logger.info(f"处理后abm消息: {abm}")
+            logger.info(f"转换后abm消息: {abm}")
             await self.handle_msg(abm)
