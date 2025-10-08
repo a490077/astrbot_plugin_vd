@@ -93,7 +93,7 @@ class WechatPadProMaxWebhook:
                 # 处理消息
                 try:
                     await self.event_handler(m)
-                    logger.debug(f"已处理消息Id: {m.get('msgId','')}")
+                    logger.debug(f"已提交消息Id: {m.get('msgId','')}")
                     processed += 1
                 except Exception:
                     return {"ok": False, "warning": "提交消息处理事件时报错"}
@@ -119,8 +119,8 @@ class WechatPadProMaxWebhook:
 
     async def send_text(self, to: str, message: str):
         """发送文本消息"""
-        logger.info(f"to:{to} message:{message}")
+        logger.debug(f"to:{to} message:{message}")
 
     async def send_image(self, to: str, image_path: str):
         """发送图片消息"""
-        logger.info(f"to:{to} image:{image_path}")
+        logger.debug(f"to:{to} image:{image_path}")

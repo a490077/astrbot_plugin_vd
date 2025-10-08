@@ -71,7 +71,7 @@ class WechatPadProMaxPlatformAdapter(Platform):
             session_id=message.session_id,
             client=self.webhook_helper,  # 传入客户端实例
         )
-        logger.debug(f"提交事件...")
+        logger.debug(f"提交消息事件...")
         self.commit_event(message_event)  # 提交事件到事件队列。不要忘记！
 
     async def _handle_webhook_event(self, event_data: dict):
@@ -82,3 +82,7 @@ class WechatPadProMaxPlatformAdapter(Platform):
         if abm:
             logger.debug(f"转换后abm消息: {abm}")
             await self.handle_msg(abm)
+
+    async def terminate(self):
+        await self.webhook_helper.stop()
+        logger.info("WechatPadProMax 适配器已被优雅地关闭")
