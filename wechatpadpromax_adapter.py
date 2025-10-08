@@ -53,13 +53,12 @@ class WechatPadProMaxPlatformAdapter(Platform):
         abm.type = MessageType.FRIEND_MESSAGE  # 还有 friend_message，对应私聊。具体平台具体分析。重要！
         # abm.group_id = data["group_id"]  # 如果是私聊，这里可以不填
         abm.message_str = data.get("text", "")  # 纯文本消息。重要！
-        abm.sender = MessageMember(user_id=data["fromUser"], nickname=data["fromNick"])  # 发送者。重要！
+        abm.sender = MessageMember(user_id=data.get("fromUser", ""), nickname=data.get("fromNick", ""))  # 发送者。重要！
         abm.message = [Plain(text=data.get("text", ""))]  # 消息链。如果有其他类型的消息，直接 append 即可。重要！
         abm.raw_message = data.get("rawContent", "")  # 原始消息。
-        abm.self_id = data["toUser"]
-        abm.session_id = data["fromUser"]  # 会话 ID。重要！
-        abm.message_id = data["newMsgId"]  # 消息 ID。
-
+        abm.self_id = data.get("toUser", "")  # 机器人自己的 ID。重要！
+        abm.session_id = data.get("fromUser", "")  # 会话 ID。重要！
+        abm.message_id = data.get("newMsgId", "")  # 消息 ID。
         return abm
 
     async def handle_msg(self, message: AstrBotMessage):
