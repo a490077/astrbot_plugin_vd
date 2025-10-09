@@ -103,18 +103,19 @@ class WechatPadProMaxWebhook:
                     except Exception as e:
                         logger.warning(f"解析游标失败: {e}")
                 continue
-            key = f"{m.get('newMsgId','')}|{m.get('msgId','')}"
-            if self.mark_or_seen(key):
-                logger.debug(f"跳过消息Id: {key}")
-                skipped += 1
-            else:
-                # 处理消息
-                try:
-                    await self.event_handler(m)
-                    logger.debug(f"已提交消息Id: {key}")
-                    processed += 1
-                except Exception:
-                    return {"ok": False, "warning": "提交消息处理事件时报错"}
+            elif m.get("msgType") == 1:
+                key = f"{m.get('newMsgId','')}|{m.get('msgId','')}"
+                if self.mark_or_seen(key):
+                    logger.debug(f"跳过消息Id: {key}, text: {m.get('text','')}")
+                    skipped += 1
+                else:
+                    # 处理消息
+                    try:
+                        await self.event_handler(m)
+                        logger.debug(f"已提交消息Id: {key}, text: {m.get('text','')}")
+                        processed += 1
+                    except Exception:
+                        return {"ok": False, "warning": "提交消息处理事件时报错"}
 
         return {"ok": True, "processedCount": processed, "skippedCount": skipped}
 
