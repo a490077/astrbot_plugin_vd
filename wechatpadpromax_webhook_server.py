@@ -66,12 +66,15 @@ class WechatPadProMaxWebhook:
         except Exception:
             return quart.abort(400, "Invalid JSON")
 
-        logger.info(f"收到 Webhook: {body.get('MessageType','')} from {body.get('Wxid','')}, time: {body.get('Timestamp','')}")
-
         mtype = body.get("MessageType", "")
+        logger.info(f"收到 Webhook: {mtype} from {body.get('Wxid','')}, time: {body.get('Timestamp','')}")
+
         if ("*" not in self.message_types) and (mtype not in self.message_types):
             logger.warning(f"过滤掉消息类型: {mtype}")
             return {"ok": True, "skipped": "filtered by messageTypes"}
+
+        if mtype == "test_message":
+            logger.info(f"测试 Webhook: {body}")
 
         if not self.include_self and body.get("IsSelf") is True:
             logger.warning(f"跳过自己发送的消息: {body}")
