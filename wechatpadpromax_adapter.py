@@ -86,3 +86,6 @@ class WechatPadProMaxPlatformAdapter(Platform):
     async def terminate(self):
         await self.webhook_helper.stop()
         logger.info("WechatPadProMax 适配器已被优雅地关闭")
+
+    def get_client(self):
+        return self.webhook_helper

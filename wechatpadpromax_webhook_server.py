@@ -15,11 +15,12 @@ class WechatPadProMaxWebhook:
         self.secret = config.get("secret", "your-signature-secret")
         self.include_self = config.get("includeSelfMessage", True)
         self.message_types = config.get("messageTypes", ["*"])
-        self.timestamp_skew = config.get("timestampSkewSec", 900)
+        self.timestamp_skew = config.get("timestampSkewSec", 300)
         self.dedupe_max = config.get("dedupeMax", 5000)
 
         self._seen = set()
         self.event_handler = event_handler
+        self._cursor = None
 
         self.host = config.get("host", "0.0.0.0")
         self.port = config.get("port", 6196)
@@ -74,9 +75,9 @@ class WechatPadProMaxWebhook:
         if not self.include_self and body.get("IsSelf") is True:
             return {"ok": True, "skipped": "self message"}
 
-        # if self.secret and not self.verify_signature(body):
-        #     logger.warning("签名校验失败")
-        #     return quart.abort(401, "Signature verify failed")
+        if self.secret and not self.verify_signature(body):
+            logger.warning("签名校验失败")
+            return quart.abort(401, "Signature verify failed")
 
         ts = int(body.get("Timestamp", 0))
         now = int(time.time())
@@ -86,14 +87,31 @@ class WechatPadProMaxWebhook:
 
         processed, skipped = 0, 0
         for m in (body.get("Data") or {}).get("messages", []) or []:
+            if m.get("msgType") == 51:
+                raw = m.get("rawContent", "")
+                if "<name>lastMessage</name>" in raw:
+                    try:
+                        import xml.etree.ElementTree as ET, json
+
+                        root = ET.fromstring(raw)
+                        op = root.find("op")
+                        name = op.find("name").text
+                        if name == "lastMessage":
+                            arg = json.loads(op.find("arg").text)
+                            self._cursor = {"messageSvrId": arg.get("messageSvrId"), "MsgCreateTime": arg.get("MsgCreateTime")}
+                            logger.debug(f"游标消息: {self._cursor}")
+                    except Exception as e:
+                        logger.warning(f"解析游标失败: {e}")
+                continue
             key = f"{m.get('newMsgId','')}|{m.get('msgId','')}"
             if self.mark_or_seen(key):
+                logger.debug(f"跳过消息Id: {key}")
                 skipped += 1
             else:
                 # 处理消息
                 try:
                     await self.event_handler(m)
-                    logger.debug(f"已提交消息Id: {m.get('msgId','')}")
+                    logger.debug(f"已提交消息Id: {key}")
                     processed += 1
                 except Exception:
                     return {"ok": False, "warning": "提交消息处理事件时报错"}
