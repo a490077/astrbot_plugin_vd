@@ -56,7 +56,7 @@ def 查单品(query: str):
 def 查条码(code_69: str):
     mask = 价目表["条码"].str.contains(code_69, na=False)
     单品资料 = 价目表[mask]
-    单品资料.to_dict(orient="records")
+    单品资料 = 单品资料.to_dict(orient="records")
     return format_data(单品资料)
 
 

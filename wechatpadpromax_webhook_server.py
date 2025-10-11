@@ -120,7 +120,7 @@ class WechatPadProMaxWebhook:
                         logger.debug(f"已提交消息Id: {key}, text: {m.get('text','')}")
                         processed += 1
                     except Exception:
-                        return {"ok": False, "warning": "提交消息处理事件时报错"}
+                        return quart.abort(503, "提交消息处理事件时出错")
 
         return {"ok": True, "processedCount": processed, "skippedCount": skipped}
 
