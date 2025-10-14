@@ -82,8 +82,6 @@ class VindaPlugin(Star):
 
     def __init__(self, context: Context, config: dict):
         super().__init__(context)
-        from .wechatpadpromax_adapter import WechatPadProMaxPlatformAdapter  # 导入适配器
-
         self.config = config
         self.vinda = Vinda(self.config)
 
@@ -281,13 +279,13 @@ class VindaPlugin(Star):
         # 尝试获取图片
         if not vcode:
             return
-        img_url = f'{self.config.cookie_url.replace("api", "config", 1)}/image/vinda/{message_str}.png'
+        img_url = f'{self.config.cookie_url.replace("api", "config", 1)}/image/vinda/{vcode}.png'
         try:
             response = requests.head(img_url, timeout=5)
             if response.status_code == 200:
                 yield event.image_result(img_url)
             else:
-                img_message = f"未找到 { message_str } 相关图片"
+                img_message = f"未找到 { vcode } 相关图片"
                 logger.info(img_message)
         except requests.RequestException:
             img_message = "图片获取失败，可能图片不存在或网络问题"
