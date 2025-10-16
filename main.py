@@ -17,6 +17,8 @@ from dataclasses import dataclass, field
 script_path = Path(__file__).parent  # pathlib 方法
 logger.info(f"当前文件目录: {script_path}")
 
+config_path = script_path / "config.json"
+
 价格 = pd.read_csv(script_path / "价格.csv").fillna("")
 价目表 = pd.read_csv(script_path / "价目表.csv").fillna("")
 
@@ -70,9 +72,20 @@ def load_config(file_path="config.json"):
         return {}
 
 
-conf = load_config(script_path / "config.json")
-wx_id_dict = conf.get("wx_id_dict", {})
-user_dict = conf.get("user_dict", {})
+# 保存 JSON 配置文件
+def save_config(conf: dict, file_path="config.json"):
+    """将配置字典保存到 JSON 文件"""
+    try:
+        with open(file_path, "w", encoding="utf-8") as file:
+            json.dump(conf, file, ensure_ascii=False, indent=4)
+        logger.info(f"配置文件已保存: {file_path}")
+    except Exception as e:
+        logger.error(f"保存配置文件失败: {e}")
+
+
+conf = load_config(config_path)
+wx_id_dict = conf.setdefault("wx_id_dict", {})
+user_dict = conf.setdefault("user_dict", {})
 
 
 @register("vd", "pp", "自用vd助手", "1.0.1", "https://github.com/a490077/astrbot_plugin_vd")
@@ -299,6 +312,18 @@ class VindaPlugin(Star):
             message_str = f"未找到 { query } 相关信息"
         yield event.plain_result(message_str)
 
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @filter.command("绑定")
+    async def 单品(self, event: AstrMessageEvent, sid_and_name: str = None):
+        """绑定sid和用户姓名"""
+        sid_list = sid_and_name.split("=")  # 拆分条件
+        if len(sid_list) != 2:
+            yield event.plain_result("参数错误, 格式: sid=姓名")
+            return
+        wx_id_dict[sid_list[0]] = sid_list[1]
+        save_config(conf, config_path)
+        yield event.plain_result(f"已绑定 {sid_list[0]} 到 {sid_list[1]}")
+
 
 @dataclass
 class VTools(FunctionTool):
@@ -319,6 +344,9 @@ class VTools(FunctionTool):
         pattern = re.compile(r"^[VATD]\d{4}(-?[A-Z])?$")
         if pattern.match(vcode):  # V码格式验证
             return vcode_lookup(vcode)
+        else:
+            logger.error(f"函数工具提供V码格式错误: {vcode}")
+            return "V码格式错误, 应满足正则表达式:[VATD]\\d{4}(-?[A-Z])?"
 
 
 tool = VTools()
