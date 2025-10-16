@@ -314,7 +314,7 @@ class VindaPlugin(Star):
 
     @filter.permission_type(filter.PermissionType.ADMIN)
     @filter.command("绑定")
-    async def 单品(self, event: AstrMessageEvent, sid_and_name: str = None):
+    async def 绑定(self, event: AstrMessageEvent, sid_and_name: str = None):
         """绑定sid和用户姓名"""
         sid_list = sid_and_name.split("=")  # 拆分条件
         if len(sid_list) != 2:
