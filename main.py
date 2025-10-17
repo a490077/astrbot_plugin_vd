@@ -269,7 +269,7 @@ class VindaPlugin(Star):
         """监测到V码或条码, 自动回复产品资料"""
         message_str = event.message_str
         message_str = message_str.strip().upper()
-        pattern = re.compile(r"^[VATD]\d{4}(-?[A-Z])?$")
+        pattern = re.compile(r"^[VATD]W?\d{4}(-?[A-Z])?$")
         pattern_code69 = re.compile(r"^\d{13}$")
         reply_message = ""
         vcode = ""
@@ -278,7 +278,7 @@ class VindaPlugin(Star):
             vcode = message_str
         elif pattern_code69.match(message_str):  # 69码格式验证
             reply_message = 查条码(message_str)
-            pattern_vcode = r"[VATD]\d{4}(-?[A-Z])?"
+            pattern_vcode = r"[VATD]W?\d{4}(-?[A-Z])?"
             match = re.search(pattern_vcode, reply_message)
             if match:
                 vcode = match.group(0)
@@ -305,7 +305,7 @@ class VindaPlugin(Star):
             logger.info(img_message)
 
     @filter.command("查找")
-    async def 单品(self, event: AstrMessageEvent, query: str = None):
+    async def 查找(self, event: AstrMessageEvent, query: str = None):
         """根据产品名称查询产品V码"""
         message_str = 查单品(query)
         if not message_str:
