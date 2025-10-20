@@ -341,7 +341,7 @@ class VTools(FunctionTool):
 
     async def run(self, vcode: str):
         vcode = vcode.strip().upper()
-        pattern = re.compile(r"^[VATD]\d{4}(-?[A-Z])?$")
+        pattern = re.compile(r"^[VATD]\d{4}(-[1-2]|-?[A-Z])?$")
         if pattern.match(vcode):  # V码格式验证
             return vcode_lookup(vcode)
         else:
