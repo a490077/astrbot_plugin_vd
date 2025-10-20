@@ -269,7 +269,7 @@ class VindaPlugin(Star):
         """监测到V码或条码, 自动回复产品资料"""
         message_str = event.message_str
         message_str = message_str.strip().upper()
-        pattern = re.compile(r"^[VATD]W?\d{4}(-?[A-Z])?$")
+        pattern = re.compile(r"^[VATD]W?\d{4}(-[1-2]|-?[A-Z])?$")
         pattern_code69 = re.compile(r"^\d{13}$")
         reply_message = ""
         vcode = ""
@@ -278,7 +278,7 @@ class VindaPlugin(Star):
             vcode = message_str
         elif pattern_code69.match(message_str):  # 69码格式验证
             reply_message = 查条码(message_str)
-            pattern_vcode = r"[VATD]W?\d{4}(-?[A-Z])?"
+            pattern_vcode = r"[VATD]W?\d{4}(-[1-2]|-?[A-Z])?"
             match = re.search(pattern_vcode, reply_message)
             if match:
                 vcode = match.group(0)
@@ -333,7 +333,10 @@ class VTools(FunctionTool):
         default_factory=lambda: {
             "type": "object",
             "properties": {
-                "vcode": {"type": "string", "description": "产品的V码,例如 V1234-A, 满足正则表达式:[VATD]\d{4}(-?[A-Z])?"}
+                "vcode": {
+                    "type": "string",
+                    "description": "产品的V码,例如 V1234-A, 满足正则表达式:[VATD]W?\d{4}(-[1-2]|-?[A-Z])?",
+                }
             },
             "required": ["vcode"],
         }
@@ -341,7 +344,7 @@ class VTools(FunctionTool):
 
     async def run(self, vcode: str):
         vcode = vcode.strip().upper()
-        pattern = re.compile(r"^[VATD]\d{4}(-[1-2]|-?[A-Z])?$")
+        pattern = re.compile(r"^[VATD]W?\d{4}(-[1-2]|-?[A-Z])?$")
         if pattern.match(vcode):  # V码格式验证
             return vcode_lookup(vcode)
         else:
