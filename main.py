@@ -323,21 +323,20 @@ class VindaPlugin(Star):
         wx_id_dict[sid_list[0]] = sid_list[1]
         save_config(conf, config_path)
         yield event.plain_result(f"已绑定 {sid_list[0]} 到 {sid_list[1]}")
-        
+
     @filter.permission_type(filter.PermissionType.ADMIN)
     @filter.command("dollar")
     async def dollar(self, event: AstrMessageEvent, sid_and_name: str = None):
         """查询大模型apikey余额"""
         cookies = {
-            'session': 'MTc2MDU4NDA0NXxEWDhFQVFMX2dBQUJFQUVRQUFEX2xQLUFBQVVHYzNSeWFXNW5EQVlBQkhKdmJHVURhVzUwQkFJQUFnWnpkSEpwYm1jTUNBQUdjM1JoZEhWekEybHVkQVFDQUFJR2MzUnlhVzVuREFjQUJXZHliM1Z3Qm5OMGNtbHVad3dKQUFka1pXWmhkV3gwQm5OMGNtbHVad3dFQUFKcFpBTnBiblFFQkFELU5wNEdjM1J5YVc1bkRBb0FDSFZ6WlhKdVlXMWxCbk4wY21sdVp3d0xBQWswT1RBd056Y3hNelU9fAAzM2BT6Rk9V2xlqPfsL_Wg3_Du7SWPPE382E6_WBAe',
+            "session": "MTc2MDU4NDA0NXxEWDhFQVFMX2dBQUJFQUVRQUFEX2xQLUFBQVVHYzNSeWFXNW5EQVlBQkhKdmJHVURhVzUwQkFJQUFnWnpkSEpwYm1jTUNBQUdjM1JoZEhWekEybHVkQVFDQUFJR2MzUnlhVzVuREFjQUJXZHliM1Z3Qm5OMGNtbHVad3dKQUFka1pXWmhkV3gwQm5OMGNtbHVad3dFQUFKcFpBTnBiblFFQkFELU5wNEdjM1J5YVc1bkRBb0FDSFZ6WlhKdVlXMWxCbk4wY21sdVp3d0xBQWswT1RBd056Y3hNelU9fAAzM2BT6Rk9V2xlqPfsL_Wg3_Du7SWPPE382E6_WBAe",
         }
         headers = {
-            'New-API-User': '6991',
+            "New-API-User": "6991",
         }
         try:
-            response = requests.get('https://api.bianxie.ai/api/user/self', headers=headers, cookies=cookies).json()
-            yield event.plain_result(f"apikey剩余💰: {response["data"]["quota"]/500000:.2f}")
+            response = requests.get("https://api.bianxie.ai/api/user/self", headers=headers, cookies=cookies).json()
+            yield event.plain_result(f'apikey剩余💰: {response["data"]["quota"]/500000:.2f}')
         except Exception as e:
             # logger.error(e)
             yield event.plain_result("apikey余额获取失败...")
-
