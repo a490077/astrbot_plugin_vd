@@ -323,34 +323,21 @@ class VindaPlugin(Star):
         wx_id_dict[sid_list[0]] = sid_list[1]
         save_config(conf, config_path)
         yield event.plain_result(f"已绑定 {sid_list[0]} 到 {sid_list[1]}")
-
-
-@dataclass
-class VTools(FunctionTool):
-    name: str = "get_vcode_info"  # tool 的名称
-    description: str = "根据产品V码获取产品详细信息,包含产品的条码,规格,渠道等等"  # tool 的描述
-    parameters: dict = field(
-        default_factory=lambda: {
-            "type": "object",
-            "properties": {
-                "vcode": {
-                    "type": "string",
-                    "description": "产品的V码,例如 V1234-A, 满足正则表达式:[VATD]W?\d{4}(-[1-2]|-?[A-Z])?",
-                }
-            },
-            "required": ["vcode"],
+        
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @filter.command("dollar")
+    async def dollar(self, event: AstrMessageEvent, sid_and_name: str = None):
+        """查询大模型apikey余额"""
+        cookies = {
+            'session': 'MTc2MDU4NDA0NXxEWDhFQVFMX2dBQUJFQUVRQUFEX2xQLUFBQVVHYzNSeWFXNW5EQVlBQkhKdmJHVURhVzUwQkFJQUFnWnpkSEpwYm1jTUNBQUdjM1JoZEhWekEybHVkQVFDQUFJR2MzUnlhVzVuREFjQUJXZHliM1Z3Qm5OMGNtbHVad3dKQUFka1pXWmhkV3gwQm5OMGNtbHVad3dFQUFKcFpBTnBiblFFQkFELU5wNEdjM1J5YVc1bkRBb0FDSFZ6WlhKdVlXMWxCbk4wY21sdVp3d0xBQWswT1RBd056Y3hNelU9fAAzM2BT6Rk9V2xlqPfsL_Wg3_Du7SWPPE382E6_WBAe',
         }
-    )  # tool 的参数定义
+        headers = {
+            'New-API-User': '6991',
+        }
+        try:
+            response = requests.get('https://api.bianxie.ai/api/user/self', headers=headers, cookies=cookies).json()
+            yield event.plain_result(f"apikey剩余💰: {response["data"]["quota"]/500000:.2f}")
+        except Exception as e:
+            # logger.error(e)
+            yield event.plain_result("apikey余额获取失败...")
 
-    async def run(self, vcode: str):
-        vcode = vcode.strip().upper()
-        pattern = re.compile(r"^[VATD]W?\d{4}(-[1-2]|-?[A-Z])?$")
-        if pattern.match(vcode):  # V码格式验证
-            return vcode_lookup(vcode)
-        else:
-            logger.error(f"函数工具提供V码格式错误: {vcode}")
-            return "V码格式错误, 应满足正则表达式:[VATD]\\d{4}(-?[A-Z])?"
-
-
-tool = VTools()
-tool_set = ToolSet([tool])
